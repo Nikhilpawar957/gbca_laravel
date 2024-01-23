@@ -14,7 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory(300)->create();
+        // For Admin User only
+        $this->call([
+            UserSeeder::class,
+        ]);
+
+        // For Other Users
+        //\App\Models\User::factory(300)->create();
         //\App\Models\Category::factory(5)->create();
         //\App\Models\Resources::factory(30)->create();
         //\App\Models\ContactForm::factory(30)->create();
@@ -23,8 +29,6 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        // $this->call([
-        //     UserSeeder::class,
-        // ]);
+
     }
 }
