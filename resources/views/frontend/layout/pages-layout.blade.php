@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    {{-- Meta Tags --}}
     <meta charset="utf-8" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -22,9 +23,10 @@
         href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"
         rel="stylesheet">
 
+    {{-- CSS --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
-
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/owl.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/slider/slick.css') }}">
@@ -32,14 +34,35 @@
     <link rel="stylesheet" href="{{ asset('assets/css/slider/main.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
 
+    {{-- Title --}}
     <title>@yield('pageTitle')</title>
+
+    {{-- Page Styles --}}
     @stack('stylesheets')
 </head>
 
 <body>
+    {{-- Header --}}
     @include('frontend.layout.inc.header')
+
+    {{-- Page Content --}}
     @yield('content')
+
+    {{-- Footer --}}
     @include('frontend.layout.inc.footer')
+
+    {{-- Scripts --}}
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/isotope.min.js') }}"></script>
+    <script src="{{ asset('assets/js/owl-carousel.js') }}"></script>
+    <script src="{{ asset('assets/js/tabs.js') }}"></script>
+    <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <script src="{{ asset('assets/js/slick.min.js') }}"></script>
+    <script src="{{ asset('assets/js/custom_scripts.js') }}"></script>
+
+    {{-- Page Scripts --}}
     @stack('scripts')
 </body>
 

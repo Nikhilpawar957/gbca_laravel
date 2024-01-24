@@ -1,5 +1,5 @@
 @extends('frontend.layout.pages-layout')
-@section('pageTitle', isset($pageTitle) ? $pageTitle : env('APP_NAME'))
+@section('pageTitle', isset($pageTitle) ? $pageTitle : 'GBCA & Associates LLP Chartered Accountants')
 @section('content')
 
 @endsection

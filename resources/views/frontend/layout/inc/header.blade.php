@@ -3,17 +3,17 @@
         <div class="row">
             <div class="col-12">
                 <nav class="main-nav">
-                    <a href="index.php" class="logo"> <img src="assets/img/gbc-llp-logo.png" class="img-fluid logo-img">
+                    <a href="index.php" class="logo"> <img src="{{ asset('assets/img/gbc-llp-logo.png') }}"
+                            class="img-fluid logo-img">
                     </a>
                     <ul class="nav">
                         <li class="active"> <a href="about-us.php">About Us </a> </li>
-                        <li class="has-sub "> <a href="javascript:void(0)">Services <img src="assets/img/plus-icon.svg"
-                                    class=" menu-plus"></a>
+                        <li class="has-sub "> <a href="javascript:void(0)">Services <img
+                                    src="{{ asset('assets/img/plus-icon.svg') }}" class=" menu-plus"></a>
                             <ul class="sub-menu">
-                                <li><a href="transaction-business-structuring.php">Transaction and Business
-                                        Structuring</a></li>
-                                <li><a href="audit-assurance.php">Audit and Assurance</a></li>
-                                <li><a href="direct-tax.php">Direct Tax</a></li>
+                                <li><a href="{{ route('services.transaction-and-business-structuring') }}">Transaction and Business Structuring</a></li>
+                                <li><a href="{{ route('services.audit-and-assurance') }}">Audit and Assurance</a></li>
+                                <li><a href="{{ route('services.direct-tax') }}">Direct Tax</a></li>
                                 <li><a href="corporate-regulatory-laws.php">Corporate and Regulatory Laws</a></li>
                                 <li><a href="indirect-tax.php">Indirect Tax</a></li>
                                 <li><a href="fema-international-taxation.php">FEMA and International Taxation</a></li>
@@ -27,7 +27,7 @@
                         </li>
                         <li class="has-sub">
                             <a href="javascript:void(0);">Resources
-                                <img src="assets/img/plus-icon.svg" class="menu-plus">
+                                <img src="{{ asset('assets/img/plus-icon.svg') }}" class="menu-plus">
                             </a>
                             <ul class="sub-menu">
                                 <li class="">
@@ -77,10 +77,10 @@
                         <li><a href="contact-us.php">Contact Us</a></li>
                         <li class="pad-diff has-sub"> </li>
                         <li> <a href="alumni-login.php" class="almn-login">Alumni Login <img
-                                    src="assets/img/plus-menu-orange.svg" class=" menu-plus"></a> </li>
+                                    src="{{ asset('assets/img/plus-menu-orange.svg') }}" class=" menu-plus"></a> </li>
                         <li class="global-btn">
                             <a href="https://www.gbcauae.com/" target="_blank" class="external-btn"><img
-                                    src="assets/img/globe.png" class="globe-icon">UAE Connect</a>
+                                    src="{{ asset('assets/img/globe.png') }}" class="globe-icon">UAE Connect</a>
                         </li>
                     </ul>
                     <a class="menu-trigger"> <span>Menu</span> </a>
