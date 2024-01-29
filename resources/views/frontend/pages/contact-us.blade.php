@@ -33,32 +33,36 @@
             <div class="row">
                 <div class="col-lg-6 col-md-7">
                     <div class="form-section">
-                        <form id="contact" class="contact-form1" action="" method="post">
-                            <div class="alert alert-danger errmsg text-center " id="success_register"
+                        <form id="contact" class="contact-form1" action="{{ route('contact-form-submit') }}"
+                            method="post">
+                            <div class="alert alert-danger text-center" id="danger_register"
+                                style="display:none; margin-top:20px"></div>
+                            <div class="alert alert-success text-center" id="success_register"
                                 style="display:none; margin-top:20px"></div>
                             <div class="contact-form__two">
                                 <div class="row">
                                     <div class="field contact-inner text-left col-lg-12">
-                                        <input type="text" name="fullname20" id="fullname20"
-                                            placeholder="Enter Full Name">
-                                        <label for="fullname20">Full Name</label>
+                                        <span class="text-danger error-text full_name_error"></span>
+                                        <input type="text" name="full_name" id="full_name" placeholder="Enter Full Name">
+                                        <label for="fullname">Full Name</label>
                                     </div>
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
-                                        <input type="email" name="email20" id="email20" placeholder="Enter E-mail">
-                                        <label for="email20">E-mail</label>
+                                        <span class="text-danger error-text email_error"></span>
+                                        <input type="text" name="email" id="email" placeholder="Enter E-mail">
+                                        <label for="email">E-mail</label>
                                     </div>
-
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
-                                        <input type="tel" name="phone20" id="phone20"
+                                        <span class="text-danger error-text phone_error"></span>
+                                        <input type="tel" name="phone" id="phone"
                                             placeholder="Enter Contact Number">
-                                        <label for="phone20">Contact Number</label>
+                                        <label for="phone">Contact Number</label>
                                     </div>
                                     <div class="field contact-inner col-lg-12 text-left">
-                                        <textarea name="massage20" id="massage20" placeholder="Enter message here"></textarea>
-                                        <label for="massage20">Write a Message</label>
+                                        <span class="text-danger error-text message_error"></span>
+                                        <textarea name="message" id="message" placeholder="Enter message here"></textarea>
+                                        <label for="massage">Write a Message</label>
                                     </div>
                                 </div>
-
                                 <div class="comment-submit-btn">
                                     <button type="submit" id="contact_form_submit" class="button orange-btn">Submit<img
                                             src="{{ asset('assets/img/arrow-right-white.svg') }}"
@@ -67,8 +71,6 @@
                             </div>
                         </form>
                     </div>
-
-
                 </div>
                 <div class="col-lg-6 col-md-5">
                     <div class="contact-info">
@@ -90,7 +92,6 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
@@ -132,6 +133,45 @@
                     items: 1
                 }
             }
+        });
+
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content'),
+            }
+        });
+
+        $("form#contact").submit(function(e) {
+            e.preventDefault();
+            var form = this;
+            var formdata = new FormData(form);
+            $.ajax({
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: formdata,
+                processData: false,
+                dataType: "json",
+                contentType: false,
+                beforeSend: function() {
+                    $(form).find('span.error-text').text('');
+                },
+                success: function(response) {
+                    //console.log(response);
+                    if (response.code == 1) {
+                        $(form)[0].reset();
+                        $("#success_register").text(response.msg);
+                        $("#success_register").slideDown("slow").delay(5000).slideUp();
+                    } else {
+                        $("#danger_register").text(response.msg);
+                        $("#danger_register").slideDown("slow").delay(5000).slideUp();
+                    }
+                },
+                error: function(response) {
+                    $.each(response.responseJSON.errors, function(prefix, val) {
+                        $(form).find('span.' + prefix + '_error').text(val[0]);
+                    });
+                }
+            });
         });
     </script>
 @endpush

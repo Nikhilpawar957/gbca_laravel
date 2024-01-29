@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'frontend.pages.index')->name('index');
 
+Route::view('/about-us', 'frontend.pages.about-us')->name('about-us');
+
 Route::prefix('services')->name('services.')->group(function () {
     Route::view('/', 'frontend.pages.services')->name('services');
     Route::view('/transaction-and-business-structuring', 'frontend.pages.transaction-and-business-structuring')->name('transaction-and-business-structuring');
@@ -33,8 +36,11 @@ Route::prefix('services')->name('services.')->group(function () {
 
 Route::prefix('resources')->name('resources.')->group(function () {
     Route::view('/', 'frontend.pages.resources')->name('all');
+    Route::get('/{category}', [HomeController::class, 'resource_category'])->name('resource_category');
 });
 
 Route::view('/industries', 'frontend.pages.industries')->name('industries');
 Route::view('/careers', 'frontend.pages.careers')->name('careers');
 Route::view('/contact-us', 'frontend.pages.contact-us')->name('contact-us');
+
+Route::post('/contact-form-submit', [HomeController::class, 'contact_form_submit'])->name('contact-form-submit');

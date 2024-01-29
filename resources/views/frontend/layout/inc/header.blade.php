@@ -7,23 +7,28 @@
                             class="img-fluid logo-img">
                     </a>
                     <ul class="nav">
-                        <li class="active"> <a href="about-us.php">About Us </a> </li>
+                        <li class="{{ request()->is('about-us') ? 'active-class active' : '' }}"><a
+                                href="{{ route('about-us') }}">About Us </a></li>
                         <li class="has-sub "> <a href="javascript:void(0)">Services <img
                                     src="{{ asset('assets/img/plus-icon.svg') }}" class=" menu-plus"></a>
                             <ul class="sub-menu">
-                                <li><a href="{{ route('services.transaction-and-business-structuring') }}">Transaction and Business Structuring</a></li>
+                                <li><a href="{{ route('services.transaction-and-business-structuring') }}">Transaction
+                                        and Business Structuring</a></li>
                                 <li><a href="{{ route('services.audit-and-assurance') }}">Audit and Assurance</a></li>
                                 <li><a href="{{ route('services.direct-tax') }}">Direct Tax</a></li>
-                                <li><a href="corporate-regulatory-laws.php">Corporate and Regulatory Laws</a></li>
-                                <li><a href="indirect-tax.php">Indirect Tax</a></li>
-                                <li><a href="fema-international-taxation.php">FEMA and International Taxation</a></li>
-                                <li><a href="safe.php">SAFE</a></li>
-                                <li><a href="doing-business-india.php" class="last-item">Doing Business in India</a>
+                                <li><a href="{{ route('services.corporate-and-regulatory-laws') }}">Corporate and
+                                        Regulatory Laws</a></li>
+                                <li><a href="{{ route('services.indirect-tax') }}">Indirect Tax</a></li>
+                                <li><a href="{{ route('services.fema-and-international-taxation') }}">FEMA and
+                                        International Taxation</a></li>
+                                <li><a href="{{ route('services.safe') }}">SAFE</a></li>
+                                <li><a href="{{ route('services.doing-business-in-india') }}" class="last-item">Doing
+                                        Business in India</a>
                                 </li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="industries.php">Industries</a>
+                        <li class="{{ request()->is('industries') ? 'active-class active' : '' }}">
+                            <a href="{{ route('industries') }}">Industries</a>
                         </li>
                         <li class="has-sub">
                             <a href="javascript:void(0);">Resources
@@ -73,8 +78,10 @@
                                 </li>
                             </ul>
                         </li>
-                        <li><a href="careers.php">Careers</a></li>
-                        <li><a href="contact-us.php">Contact Us</a></li>
+                        <li class="{{ request()->is('careers') ? 'active-class active' : '' }}"><a
+                                href="{{ route('careers') }}">Careers</a></li>
+                        <li class="{{ request()->is('contact-us') ? 'active-class active' : '' }}"><a
+                                href="{{ route('contact-us') }}">Contact Us</a></li>
                         <li class="pad-diff has-sub"> </li>
                         <li> <a href="alumni-login.php" class="almn-login">Alumni Login <img
                                     src="{{ asset('assets/img/plus-menu-orange.svg') }}" class=" menu-plus"></a> </li>
@@ -88,9 +95,4 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        function login() {
-            window.location.href = 'alumni-login.php';
-        }
-    </script>
 </header>
