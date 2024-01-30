@@ -69,6 +69,21 @@ class HomeController extends Controller
     {
         $response = array();
         if ($request->ajax()) {
+            if ($category == "") {
+            } else {
+                $category_exists = Category::where('category_slug', '=', $category)->first();
+
+                if (!$category_exists) {
+                    abort(404);
+                } else {
+                    $get_resources = DB::table('resources')
+                        ->whereRaw('(resource_category_id = ? OR resource_subcategory_id = ?)', [$category_exists->id, $category_exists->id])
+                        ->whereNull('deleted_at')
+                        ->get();
+
+                    $response = ['resources' => $get_resources];
+                }
+            }
             return response()->json($response);
         } else {
             if ($category == "") {
