@@ -490,7 +490,7 @@ class AuthorController extends Controller
                 $request->validate([
                     'category_id' => ['required', 'integer', 'exists:categories,id'],
                     'category_name' => ['required', 'min:3', 'unique:categories,category_name,' . $request->category_id],
-                    'category_image' => ['required', 'image', 'mimes:png,jpg']
+                    'category_image' => ['required', 'image', 'mimes:png,jpg,svg']
                 ]);
             } else {
                 $request->validate([
@@ -543,7 +543,7 @@ class AuthorController extends Controller
             if ($request->hasFile('category_image')) {
                 $request->validate([
                     'category_name' => ['required', 'min:3', 'unique:categories,category_name'],
-                    'category_image' => ['required', 'image', 'mimes:png,jpg']
+                    'category_image' => ['required', 'image', 'mimes:png,jpg,svg']
                 ]);
             } else {
                 $request->validate([
@@ -553,7 +553,6 @@ class AuthorController extends Controller
 
             $insert_data = array(
                 'category_name' => $request->category_name,
-                'category_slug' => Str::slug($request->category_name),
                 'created_by' => Auth::user()->id,
             );
 
@@ -570,7 +569,7 @@ class AuthorController extends Controller
                 }
             }
 
-            $save_category = Category::insert($insert_data);
+            $save_category = Category::create($insert_data);
 
             if ($save_category) {
                 $response = array(
@@ -726,7 +725,7 @@ class AuthorController extends Controller
                 'category_name.min' => 'Category Name must be minimum 3 characters',
             ]);
 
-            $save_subcategory = Category::insert(
+            $save_subcategory = Category::create(
                 [
                     'parent_category' => $request->parent_category,
                     'category_name' => $request->category_name,

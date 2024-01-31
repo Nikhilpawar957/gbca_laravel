@@ -15,7 +15,7 @@ class HomeController extends Controller
         $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
-            'phone' => ['required', 'numeric', 'max:255'],
+            'phone' => ['required', 'numeric'],
         ]);
 
         $response = array();
@@ -87,6 +87,23 @@ class HomeController extends Controller
             return response()->json($response);
         } else {
             if ($category == "") {
+
+                $first_category = Category::first();
+
+                if (!$first_category) {
+                    abort(404);
+                } else {
+                    $get_resources = DB::table('resources')
+                        ->whereRaw('(resource_category_id = ? OR resource_subcategory_id = ?)', [$first_category->id, $first_category->id])
+                        ->whereNull('deleted_at')
+                        ->get();
+
+                    if ($get_resources->isNotEmpty()) {
+                        $response = ['resources' => $get_resources, 'pageTitle' => $first_category->category_name . " | GBCA & Associates LLP Chartered Accountants"];
+                    } else {
+                        $response = ['resources' => [], 'pageTitle' => $first_category->category_name . " | GBCA & Associates LLP Chartered Accountants"];
+                    }
+                }
             } else {
                 $category_exists = Category::where('category_slug', '=', $category)->first();
 
@@ -98,7 +115,11 @@ class HomeController extends Controller
                         ->whereNull('deleted_at')
                         ->get();
 
-                    $response = ['resources' => $get_resources];
+                    if ($get_resources->isNotEmpty()) {
+                        $response = ['resources' => $get_resources, 'pageTitle' => $category_exists->category_name . " | GBCA & Associates LLP Chartered Accountants"];
+                    } else {
+                        $response = ['resources' => [], 'pageTitle' => $category_exists->category_name . " | GBCA & Associates LLP Chartered Accountants"];
+                    }
                 }
             }
             return view('frontend.pages.resources', $response);

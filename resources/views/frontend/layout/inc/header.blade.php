@@ -35,47 +35,37 @@
                                 <img src="{{ asset('assets/img/plus-icon.svg') }}" class="menu-plus">
                             </a>
                             <ul class="sub-menu">
-                                <li class="">
-                                    <a href="resources.php?cat_name=audit-and-assurance" class="">
-                                        Audit and Assurance
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="resources.php?cat_name=transaction-and-business-structuring"
-                                        class="">
-                                        Transaction and Business Structuring
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="resources.php?cat_name=direct-tax" class="">
-                                        Direct Tax
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="resources.php?cat_name=indirect-tax" class="">
-                                        Indirect Tax
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="resources.php?cat_name=corporate-and-other-regulatory-laws" class="">
-                                        Corporate &amp; Other Regulatory Laws
-                                    </a>
-                                </li>
-                                <li class="has-sub news-has-menu">
-                                    <a href="javascript:void(0);" class="last-item">
-                                        Newsletter
-                                    </a>
-                                    <ul class="sub-menu news-submenu">
-                                        <li>
-                                            <a href="resources.php?cat_name=gbca-crossborder-insights">GBCA Crossborder
-                                                Insights
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="resources.php?cat_name=monthly">Monthly</a>
-                                        </li>
-                                    </ul>
-                                </li>
+                                @foreach (\App\Models\Category::whereNull('parent_category')->get() as $category)
+                                    @php
+                                        $subcategories = DB::table('categories')
+                                            ->where('parent_category', '=', $category->id)
+                                            ->get();
+                                        if ($subcategories->isNotEmpty()) {
+                                            $hasSubcat = 'has-sub news-has-menu';
+                                        } else {
+                                            $hasSubcat = '';
+                                        }
+                                    @endphp
+                                    <li class="{{ $hasSubcat }}">
+                                        <a href="{{ route('resources.resource_category', ['category' => $category->category_slug]) }}"
+                                            class="">
+                                            {{ $category->category_name }}
+                                        </a>
+                                        @if ($subcategories->isNotEmpty())
+                                            <ul class="sub-menu news-submenu">
+
+                                                @foreach ($subcategories as $key => $subcategory)
+                                                    <li>
+                                                        <a
+                                                            href="{{ route('resources.resource_category', ['category' => $subcategory->category_slug]) }}">
+                                                            {{ $subcategory->category_name }}
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </li>
+                                @endforeach
                             </ul>
                         </li>
                         <li class="{{ request()->is('careers') ? 'active-class active' : '' }}"><a

@@ -349,6 +349,7 @@
                         $('form#addUpdateCategory')[0].reset();
                         $("#add-edit-cat-modal").modal('hide');
                         $('#category_table').DataTable().ajax.reload();
+                        $('#subcategory_table').DataTable().ajax.reload();
                         toastr.success(response.msg);
                     } else {
                         toastr.error(response.msg);
@@ -383,6 +384,7 @@
                     if (response.code == 1) {
                         $('form#addUpdateSubCategory')[0].reset();
                         $("#add-edit-subcat-modal").modal('hide');
+                        $('#category_table').DataTable().ajax.reload();
                         $('#subcategory_table').DataTable().ajax.reload();
                         toastr.success(response.msg);
                     } else {
@@ -461,6 +463,7 @@
                                 $(form)[0].reset();
                                 $("#deleteCat input[type='hidden']").val('');
                                 $('#category_table').DataTable().ajax.reload(null, false);
+                                $('#subcategory_table').DataTable().ajax.reload(null, false);
                             } else {
                                 toastr.error(response.msg);
                             }
@@ -538,6 +541,7 @@
                                 toastr.success(response.msg);
                                 $(form)[0].reset();
                                 $("#deleteSubCat input[type='hidden']").val('');
+                                $('#category_table').DataTable().ajax.reload(null, false);
                                 $('#subcategory_table').DataTable().ajax.reload(null, false);
                             } else {
                                 toastr.error(response.msg);
