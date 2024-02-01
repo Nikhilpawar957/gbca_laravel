@@ -262,7 +262,7 @@
                         <div class="service-contact">
                             <h2 class="section-heading">Got Questions?</h2>
                             <p>We'll Take It From Here.</p>
-                            <a href="contact-us.php" class="orange-btn">Contact Us <img
+                            <a href="{{ route('contact-us') }}" class="orange-btn">Contact Us <img
                                     src="{{ asset('assets/img/arrow-right-white.svg') }}"
                                     class="img-fluid btn-arrow"></a>
                         </div>
@@ -281,7 +281,7 @@
                 </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="head-btn d-none d-lg-block d-md-block services-resource">
-                        <a href="resources.php">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
+                        <a href="{{ route('resources.all') }}">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
                                 class="img-fluid btn-arrow"></a>
                     </div>
                 </div>
@@ -289,7 +289,7 @@
 
             <div class="col-lg-12">
                 <div class="head-btn d-block d-lg-none d-md-none">
-                    <a href="resources.php">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
+                    <a href="{{ route('resources.all') }}">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
                             class="img-fluid btn-arrow"></a>
                 </div>
             </div>

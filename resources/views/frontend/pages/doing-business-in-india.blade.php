@@ -18,7 +18,7 @@
                 <div class="col-lg-12">
                     <nav aria-label="breadcrumb" class="page-content">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">GBCA </a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('index') }}">GBCA </a></li>
                             <li class="breadcrumb-item active" aria-current="page">Doing Business in India
                         </ol>
                         <h2 class="page-title">Delivering Excellence</h2>
@@ -252,14 +252,14 @@
                 </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="head-btn d-none d-lg-block d-md-block services-resource">
-                        <a href="resources.php">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
+                        <a href="{{ route('resources.all') }}">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
                                 class="img-fluid btn-arrow"></a>
                     </div>
                 </div>
             </div>
             <div class="col-lg-12">
                 <div class="head-btn d-block d-lg-none d-md-none">
-                    <a href="resources.php">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
+                    <a href="{{ route('resources.all') }}">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
                             class="img-fluid btn-arrow"></a>
                 </div>
             </div>

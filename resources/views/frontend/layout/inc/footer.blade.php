@@ -26,7 +26,7 @@
                     </div>
                     <div class="contact-listing">
                         <ul>
-                            <li><a href="tel:+91 22 3321 37 37"><img src="{{ asset('assets/img/call.svg') }}"
+                            <li><a href="tel:+912233213737"><img src="{{ asset('assets/img/call.svg') }}"
                                         class="img-fluid footer-icon">+91 22 3321 37 37</a></li>
                             <li><a href="mailto:reachus@gbcaindia.com"><img src="{{ asset('assets/img/mail.svg') }}"
                                         class="img-fluid footer-icon">reachus@gbcaindia.com</a></li>
@@ -42,14 +42,17 @@
                 <div class="footer-list services-list">
                     <h4>Services</h4>
                     <ul>
-                        <li><a href="transaction-business-structuring.php">Transaction and Business Structuring</a></li>
-                        <li><a href="audit-assurance.php">Audit and Assurance</a></li>
-                        <li><a href="direct-tax.php">Direct Tax</a></li>
-                        <li><a href="corporate-regulatory-laws.php">Corporate and Regulatory Laws</a></li>
-                        <li><a href="indirect-tax.php">Indirect Tax</a></li>
-                        <li><a href="fema-international-taxation.php">FEMA and International Taxation</a></li>
-                        <li><a href="safe.php">SAFE</a></li>
-                        <li><a href="doing-business-india.php">Doing Business in India</a></li>
+                        <li><a href="{{ route('services.transaction-and-business-structuring') }}">Transaction and
+                                Business Structuring</a></li>
+                        <li><a href="{{ route('services.audit-and-assurance') }}">Audit and Assurance</a></li>
+                        <li><a href="{{ route('services.direct-tax') }}">Direct Tax</a></li>
+                        <li><a href="{{ route('services.corporate-and-regulatory-laws') }}">Corporate and Regulatory
+                                Laws</a></li>
+                        <li><a href="{{ route('services.indirect-tax') }}">Indirect Tax</a></li>
+                        <li><a href="{{ route('services.fema-and-international-taxation') }}">FEMA and International
+                                Taxation</a></li>
+                        <li><a href="{{ route('services.safe') }}">SAFE</a></li>
+                        <li><a href="{{ route('services.doing-business-in-india') }}">Doing Business in India</a></li>
                     </ul>
                 </div>
             </div>
@@ -57,9 +60,14 @@
                 <div class="footer-list footer-resou-list">
                     <h4>Resources</h4>
                     <ul>
-                        <li>
-                            <a href="resources.php?cat_name">adasdasd</a>
-                        </li>
+                        @foreach (\App\Models\Category::whereNull('parent_category')->orderBy('ordering')->get() as $category)
+                            <li>
+                                <a href="{{ route('resources.resource_category', ['category' => $category->category_slug]) }}"
+                                    class="">
+                                    {{ $category->category_name }}
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -67,16 +75,16 @@
                 <div class="footer-list footer-contact">
                     <h4>Get in touch</h4>
                     <ul>
-                        <li><a href="about-us.php">About us</a></li>
-                        <li><a href="contact-us.php">Contact us</a></li>
+                        <li><a href="{{ route('about-us') }}">About us</a></li>
+                        <li><a href="{{ route('contact-us') }}">Contact us</a></li>
 
                     </ul>
                     <ul class="main-list">
-                        <li><a href="industries.php" target="_blank">Industries</a>
+                        <li><a href="{{ route('industries') }}" target="_blank">Industries</a>
                         </li>
                         <li><a href="https://www.gbcauae.com/" target="_blank">UAE Connect</a>
                         </li>
-                        <li><a href="careers.php">Careers</a></li>
+                        <li><a href="{{ route('careers') }}">Careers</a></li>
                     </ul>
                 </div>
             </div>

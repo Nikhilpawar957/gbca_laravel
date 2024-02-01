@@ -48,7 +48,7 @@
                         <h2>India Union Budget 2023</h2>
                     </div>
                     <div class="col-lg-3 col-md-4">
-                        <div class="banner-cta-btn"><a href="resources.php?cat_name=union-budget" class="orange-btn">Read
+                        <div class="banner-cta-btn"><a href="{{ route('resources.resource_category',['category'=> 'union-budget']) }}" class="orange-btn">Read
                                 More <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
                                     class="img-fluid btn-arrow"></a></div>
                     </div>
@@ -392,7 +392,7 @@
                                 touch.</p>
                         </div>
                         <div class="cta-btn d-none d-lg-block d-md-block">
-                            <a href="contact-us.php" class="trasf-btn">Contact Us <img
+                            <a href="{{ route('contact-us') }}" class="trasf-btn">Contact Us <img
                                     src="{{ asset('assets/img/arrow-right-white.svg') }}"
                                     class="img-fluid btn-arrow"></a>
                         </div>

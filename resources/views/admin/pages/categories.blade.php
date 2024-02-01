@@ -58,7 +58,7 @@
                                             <th class="w-1"></th>
                                         </tr>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody id="sortable_category" class="table-tbody"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                                             <th class="w-1"></th>
                                         </tr>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody id="sortable_subcategory" class="table-tbody"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -124,12 +124,12 @@
                         <span class="error text-danger category_name_error"></span>
                     </div>
                     <div class="mb-3">
-                        <img id="category_icon" width="50" height="50" src="https://placehold.co/50x50" class="img-fluid"
-                            alt="">
+                        <img id="category_icon" width="50" height="50" src="https://placehold.co/50x50"
+                            class="img-fluid" alt="">
                     </div>
                     <div class="mb-3">
                         <label for="category_image" class="form-label">Icon</label>
-                        <input type="file" class="form-control" name="category_image">
+                        <input type="file" accept="image/*" class="form-control" name="category_image">
                         <span class="error text-danger category_image_error"></span>
                     </div>
                 </div>
@@ -246,7 +246,7 @@
                                 return '<img src="' + data +
                                     '" class="img-fluid" style="height:20px;">';
                             } else {
-                                return '<img src="{{ asset("/storage") }}/' +
+                                return '<img src="{{ asset('/storage') }}/' +
                                     data + '" class="img-fluid" style="height:20px;">';
                             }
                         },
@@ -418,6 +418,7 @@
                 success: function(response) {
                     if (response.code == 1) {
                         $("input[name='category_id']").val(id);
+                        $("#category_icon").attr('src', response.data.category_image);
                         $("input[name='category_name']").val(response.data.category_name)
                         $("#add-edit-cat-modal").modal("show");
                     } else {
@@ -554,5 +555,85 @@
                 }
             });
         }
+
+        // Sorting Categories
+        $('table tbody#sortable_category').sortable({
+            update: function(event, ui) {
+                $(this).children().each(function(index) {
+                    if ($(this).attr('data-ordering') != (index + 1)) {
+                        $(this).attr('data-ordering', (index + 1)).addClass('updated');
+                    }
+                });
+                var positions = [];
+                $('.updated').each(function() {
+                    positions.push([$(this).attr('data-index'), $(this).attr(
+                        'data-ordering')]);
+                    $(this).removeClass('updated');
+                });
+                //console.log(positions); return false;
+                //window.Livewire.emit('updateCategoryOrdering', positions);
+
+                var formdata = new FormData();
+                formdata.append('positions[]', positions);
+                $.ajax({
+                    url: "{{ route('author.change_category_order') }}",
+                    method: "POST",
+                    data: formdata,
+                    processData: false,
+                    dataType: "json",
+                    contentType: false,
+                    beforeSend: function() {},
+                    success: function(response) {
+                        toastr.remove();
+                        if (response.code == 1) {
+                            toastr.success(response.msg);
+                            $('#category_table').DataTable().ajax.reload();
+                        } else {
+                            toastr.error(response.msg);
+                        }
+                    }
+                });
+            }
+        });
+
+        // Sorting Sub-Categories
+        $('table tbody#sortable_subcategory').sortable({
+            update: function(event, ui) {
+                $(this).children().each(function(index) {
+                    if ($(this).attr('data-ordering') != (index + 1)) {
+                        $(this).attr('data-ordering', (index + 1)).addClass('updated');
+                    }
+                });
+                var positions = [];
+                $('.updated').each(function() {
+                    positions.push([$(this).attr('data-index'), $(this).attr(
+                        'data-ordering')]);
+                    $(this).removeClass('updated');
+                });
+                //console.log(positions); return false;
+                //window.Livewire.emit('updateCategoryOrdering', positions);
+
+                var formdata = new FormData();
+                formdata.append('positions[]', positions);
+                $.ajax({
+                    url: "{{ route('author.change_subcategory_order') }}",
+                    method: "POST",
+                    data: formdata,
+                    processData: false,
+                    dataType: "json",
+                    contentType: false,
+                    beforeSend: function() {},
+                    success: function(response) {
+                        toastr.remove();
+                        if (response.code == 1) {
+                            toastr.success(response.msg);
+                            $('#category_table').DataTable().ajax.reload();
+                        } else {
+                            toastr.error(response.msg);
+                        }
+                    }
+                });
+            }
+        });
     </script>
 @endpush

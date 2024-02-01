@@ -238,7 +238,7 @@
                         <div class="service-contact">
                             <h2 class="section-heading">Got Questions?</h2>
                             <p>We'll Take It From Here.</p>
-                            <a href="contact-us.php" class="orange-btn">Contact Us <img
+                            <a href="{{ route('resources.all') }}" class="orange-btn">Contact Us <img
                                     src="{{ asset('assets/img/arrow-right-white.svg') }}"
                                     class="img-fluid btn-arrow"></a>
                         </div>

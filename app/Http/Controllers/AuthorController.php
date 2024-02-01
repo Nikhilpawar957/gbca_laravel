@@ -215,7 +215,6 @@ class AuthorController extends Controller
     // Get SubCategories (Datatables)
     public function getSubCategories(Request $request)
     {
-
         if ($request->ajax()) {
 
             //DB::enableQueryLog();
@@ -388,7 +387,7 @@ class AuthorController extends Controller
                     // Change Status Button
                     if ($row->blocked == 0) {
                         $actionBtn .= '
-                        <a href="javascript:void(0);" onclick="return change_status(\''. $encode_id . '\',1);" class="text-danger" data-bs-toggle="tooltip" data-bs-placement="left" aria-label="Reject" title="Reject">
+                        <a href="javascript:void(0);" onclick="return change_status(\'' . $encode_id . '\',1);" class="text-danger" data-bs-toggle="tooltip" data-bs-placement="left" aria-label="Reject" title="Reject">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-user-x" width="24"
                                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -402,7 +401,7 @@ class AuthorController extends Controller
                         </a>';
                     } else if ($row->blocked == 1) {
                         $actionBtn .= '
-                        <a href="javascript:void(0);" onclick="return change_status(\''. $encode_id . '\',0);" class="text-success" data-bs-toggle="tooltip" data-bs-placement="left" aria-label="Approve" title="Approve">
+                        <a href="javascript:void(0);" onclick="return change_status(\'' . $encode_id . '\',0);" class="text-success" data-bs-toggle="tooltip" data-bs-placement="left" aria-label="Approve" title="Approve">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-user-check" width="24"
                                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -415,7 +414,7 @@ class AuthorController extends Controller
                         </a>';
                     } else if ($row->blocked == 2) {
                         $actionBtn .= '
-                        <a href="javascript:void(0);" onclick="return change_status(\''. $encode_id . '\',1);" class="text-danger" data-bs-toggle="tooltip" data-bs-placement="left" aria-label="Reject" title="Reject">
+                        <a href="javascript:void(0);" onclick="return change_status(\'' . $encode_id . '\',1);" class="text-danger" data-bs-toggle="tooltip" data-bs-placement="left" aria-label="Reject" title="Reject">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-user-x" width="24"
                                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -427,7 +426,7 @@ class AuthorController extends Controller
                                 <path d="M17 22l5 -5" />
                             </svg>
                         </a>
-                        <a href="javascript:void(0);" onclick="return change_status(\''. $encode_id . '\',0);" class="text-success" data-bs-toggle="tooltip" data-bs-placement="left" aria-label="Approve" title="Approve">
+                        <a href="javascript:void(0);" onclick="return change_status(\'' . $encode_id . '\',0);" class="text-success" data-bs-toggle="tooltip" data-bs-placement="left" aria-label="Approve" title="Approve">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-user-check" width="24"
                                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -602,6 +601,9 @@ class AuthorController extends Controller
         $category = Category::where('id', '=', $request->category_id)->first();
 
         if ($category) {
+
+            $category->category_image = asset('storage/' . $category->category_image);
+
             $response = array(
                 'code' => 1,
                 'msg' => 'Category Found',
@@ -674,6 +676,32 @@ class AuthorController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    // Change Ordering Category
+    function change_category_order(Request $request)
+    {
+        $positions = isset($request->positions) ? $request->positions : "";
+
+        $positions = array_chunk(explode(",", $positions[0]), 2);
+
+        // echo count($positions)."<br>";
+
+        // print_r($positions); exit;
+
+        if ($positions) {
+            foreach ($positions as $position) {
+                $index = $position[0];
+                $newPosition = $position[1];
+                Category::where('id', $index)->update([
+                    'ordering' => $newPosition,
+                    'updated_by' => Auth::user()->name,
+                ]);
+            }
+            return response()->json(['code' => 1, 'msg' => 'Position Changed Successfully']);
+        } else {
+            return response()->json(['code' => 3, 'msg' => 'Positions Not Recieved']);
+        }
     }
 
     /* Category API End  -------------------------------- */
@@ -828,6 +856,32 @@ class AuthorController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    // Change Ordering SubCategory
+    function change_subcategory_order(Request $request)
+    {
+        $positions = isset($request->positions) ? $request->positions : "";
+
+        $positions = array_chunk(explode(",", $positions[0]), 2);
+
+        // echo count($positions)."<br>";
+
+        // print_r($positions); exit;
+
+        if ($positions) {
+            foreach ($positions as $position) {
+                $index = $position[0];
+                $newPosition = $position[1];
+                Category::where('id', $index)->update([
+                    'ordering' => $newPosition,
+                    'updated_by' => Auth::user()->name,
+                ]);
+            }
+            return response()->json(['code' => 1, 'msg' => 'Position Changed Successfully']);
+        } else {
+            return response()->json(['code' => 3, 'msg' => 'Positions Not Recieved']);
+        }
     }
 
     /* Subcategory API End -------------------------------- */

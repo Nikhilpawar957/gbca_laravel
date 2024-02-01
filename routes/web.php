@@ -42,5 +42,7 @@ Route::prefix('resources')->name('resources.')->group(function () {
 Route::view('/industries', 'frontend.pages.industries')->name('industries');
 Route::view('/careers', 'frontend.pages.careers')->name('careers');
 Route::view('/contact-us', 'frontend.pages.contact-us')->name('contact-us');
+Route::view('/alumni-login', 'frontend.pages.alumni-login')->name('alumni-login');
 
+// Contact Form Submit
 Route::post('/contact-form-submit', [HomeController::class, 'contact_form_submit'])->name('contact-form-submit');

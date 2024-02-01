@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     {{-- Meta Tags --}}
     <meta charset="utf-8" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -10,6 +11,23 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+
+    <meta name="title" content="{{ (isset($meta_title) && $meta_title != "") ? $meta_title : "GBCA & Associates LLP Chartered Accountants" }}">
+    <meta name="description" content="{{ (isset($meta_desc) && $meta_desc != "") ? $meta_desc : "GBCA & Associates LLP Chartered Accountants" }}">
+    <meta name="keywords" content="{{ (isset($meta_keywords) && $meta_keywords != "") ? $meta_keywords : "" }}">
+    <meta name="robots" content="index,follow">
+
+    <!-- social responsibilities -->
+    <meta property="og:title" content="{{ (isset($meta_title) && $meta_title != "") ? $meta_title : "GBCA & Associates LLP Chartered Accountants" }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="{{ (isset($meta_desc) && $meta_desc != "") ? $meta_desc : "GBCA & Associates LLP Chartered Accountants" }}">
+    <link rel="canonical" href="{{ url()->current(); }}">
+    <meta property="og:url" content="{{ url()->current(); }}" />
+    <meta property="og:image" content="{{ (isset($meta_image) && $meta_image != "") ? $meta_image : asset('assets/img/gbc-logo.png'); }}">
+    <meta name="twitter:card" content="{{ asset('assets/img/gbc-logo.png') }}">
+
+    {{-- Title --}}
+    <title>@yield('pageTitle')</title>
 
     {{-- Shortcut Icon --}}
     <link rel="shortcut icon" href="{{ asset('assets/img/gbc-logo.png') }}">
@@ -33,9 +51,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/slider/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/slider/main.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
-
-    {{-- Title --}}
-    <title>@yield('pageTitle')</title>
 
     {{-- Page Styles --}}
     @stack('stylesheets')

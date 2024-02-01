@@ -23,9 +23,11 @@ Route::prefix('author')->name('author.')->group(function () {
         Route::post('/save-category', [AuthorController::class, 'save_category'])->name('save-category');
         Route::post('/edit-category', [AuthorController::class, 'edit_category'])->name('edit-category');
         Route::post('/delete-category', [AuthorController::class, 'delete_category'])->name('delete-category');
+        Route::post('/change_category_order', [AuthorController::class, 'change_category_order'])->name('change_category_order');
         Route::post('/save-subcategory', [AuthorController::class, 'save_subcategory'])->name('save-subcategory');
         Route::post('/edit-subcategory', [AuthorController::class, 'edit_subcategory'])->name('edit-subcategory');
         Route::post('/delete-subcategory', [AuthorController::class, 'delete_subcategory'])->name('delete-subcategory');
+        Route::post('/change_subcategory_order', [AuthorController::class, 'change_subcategory_order'])->name('change_subcategory_order');
         Route::view('/resources', 'admin.pages.resources')->name('resources');
         Route::view('/add-resource', 'admin.pages.add-resource')->name('add-resource');
         Route::get('/edit-resource/{resource_id}', [AuthorController::class, 'edit_resource'])->name('edit-resource');

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12">
                 <nav class="main-nav">
-                    <a href="index.php" class="logo"> <img src="{{ asset('assets/img/gbc-llp-logo.png') }}"
+                    <a href="{{ route('index') }}" class="logo"> <img src="{{ asset('assets/img/gbc-llp-logo.png') }}"
                             class="img-fluid logo-img">
                     </a>
                     <ul class="nav">
@@ -35,10 +35,11 @@
                                 <img src="{{ asset('assets/img/plus-icon.svg') }}" class="menu-plus">
                             </a>
                             <ul class="sub-menu">
-                                @foreach (\App\Models\Category::whereNull('parent_category')->get() as $category)
+                                @foreach (\App\Models\Category::whereNull('parent_category')->orderBy('ordering')->get() as $category)
                                     @php
                                         $subcategories = DB::table('categories')
                                             ->where('parent_category', '=', $category->id)
+                                            ->orderBy('ordering')
                                             ->get();
                                         if ($subcategories->isNotEmpty()) {
                                             $hasSubcat = 'has-sub news-has-menu';
@@ -73,7 +74,7 @@
                         <li class="{{ request()->is('contact-us') ? 'active-class active' : '' }}"><a
                                 href="{{ route('contact-us') }}">Contact Us</a></li>
                         <li class="pad-diff has-sub"> </li>
-                        <li> <a href="alumni-login.php" class="almn-login">Alumni Login <img
+                        <li> <a href="{{ route('alumni-login') }}" class="almn-login">Alumni Login <img
                                     src="{{ asset('assets/img/plus-menu-orange.svg') }}" class=" menu-plus"></a> </li>
                         <li class="global-btn">
                             <a href="https://www.gbcauae.com/" target="_blank" class="external-btn"><img
