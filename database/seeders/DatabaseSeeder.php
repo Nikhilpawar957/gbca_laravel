@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         // For Other Users
         //\App\Models\User::factory(300)->create();
         //\App\Models\Category::factory(5)->create();
-        //\App\Models\Resources::factory(30)->create();
+        //\App\Models\Resources::factory(200)->create();
         //\App\Models\ContactForm::factory(30)->create();
 
         // \App\Models\User::factory()->create([

@@ -95,17 +95,17 @@
                                             $hasSubcat = '';
                                         }
                                     @endphp
-                                    <a href="javascript:void(0);" class="nav-link {{ $hasSubcat }} {{ (Request('category') == $category->category_slug) ?  'active' : ''}}"
+                                    <a href="javascript:void(0);"
+                                        class="nav-link resource_category {{ $hasSubcat }} {{ Request('category') == $category->category_slug ? 'active' : '' }}"
                                         id="v-pills-{{ $category->category_slug }}-tab" data-bs-toggle="pill"
                                         data-bs-target="#v-pills-{{ $category->category_slug }}" type="button"
-                                        role="tab" aria-controls="v-pills-{{ $category->category_slug }}"
-                                        aria-selected="true">
+                                        data-slug="{{ $category->category_slug }}"" role="tab"
+                                        aria-controls="v-pills-{{ $category->category_slug }}" aria-selected="true">
                                         <div class="d-flex align-items-center justify-content-center me-3">
                                             <img src="{{ asset('storage/' . $category->category_image) }}">
                                         </div>
                                         {{ $category->category_name }}
                                     </a>
-
                                     @if ($subcategories->isNotEmpty())
                                         <div class="newsletter-sub" style="display: none;">
                                             @foreach ($subcategories as $key => $subcategory)
@@ -121,45 +121,44 @@
                         <div class="col-lg-9">
                             <div class="tab-content resources-tabs" id="v-pills-tabContent">
                                 @foreach (\App\Models\Category::whereNull('parent_category')->get() as $category)
-                                <div class="tab-pane fade {{ (Request('category') == $category->category_slug) ?  'show active' : ''}}" id="v-pills-{{ $category->category_slug }}" role="tabpanel"
-                                    aria-labelledby="v-pills-{{ $category->category_slug }}-tab">
-                                    <div class="row">
-                                        <div class="col-lg-7 col-md-4">
-                                            <div class="d-flex">
-                                                <div class="year-selection">
-                                                    <p>Year:</p>
-                                                    <select>
-                                                        <option value="hide">Select</option>
-                                                        <option value="2019">2019</option>
-                                                        <option value="2020">2020</option>
-                                                        <option value="2021">2021</option>
-                                                    </select>
+                                    <div class="tab-pane fade resource_tab {{ Request('category') == $category->category_slug ? 'show active' : '' }}"
+                                        id="v-pills-{{ $category->category_slug }}" role="tabpanel"
+                                        aria-labelledby="v-pills-{{ $category->category_slug }}-tab">
+                                        <div class="row">
+                                            <div class="col-lg-7 col-md-4">
+                                                <div class="d-flex">
+                                                    <div class="year-selection">
+                                                        <p>Year:</p>
+                                                        <select class="year_filter" id="year_{{ $category->id }}"
+                                                            onchange="return get_resources('{{ $category->category_slug }}',this.value,'')">
+                                                            <option value="">Select</option>
+                                                            @foreach ($years as $year)
+                                                                <option value="{{ $year->resource_year }}">
+                                                                    {{ $year->resource_year }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="year-selection month-selection">
+                                                        <p>Month:</p>
+                                                        <select class="month_filter" id="month_{{ $category->id }}"
+                                                            onchange="return get_resources('{{ $category->category_slug }}',$('#year_{{ $category->id }}').val(),this.value)">
+                                                            <option value="">Select</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                                <div class="year-selection">
-                                                    <p>Month:</p>
-                                                    <select>
-                                                        <option value="hide">Select</option>
-                                                        <option value="2019">Jan</option>
-                                                        <option value="2020">Feb</option>
-                                                        <option value="2021">March</option>
-                                                    </select>
+                                            </div>
+                                            <div class="col-lg-5 col-md-8">
+                                                <div class="search">
+                                                    <input type="text" class="searchTerm" placeholder="Search">
+                                                    <button type="submit" class="searchButton">
+                                                        <img src="{{ asset('assets/img/resources/search_black.png') }}"
+                                                            class="img-fluid">
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-5 col-md-8">
-                                            <div class="search">
-                                                <input type="text" class="searchTerm" placeholder="Search">
-                                                <button type="submit" class="searchButton">
-                                                    <img src="{{ asset('assets/img/resources/search_black.png') }}"
-                                                        class="img-fluid">
-                                                </button>
-                                            </div>
-                                        </div>
+                                        <div class="resource_list"></div>
                                     </div>
-                                    <div class="resou-content">
-                                        <h4 class="resou-head">{{ $category->category_name }}</h4>
-                                    </div>
-                                </div>
                                 @endforeach
                             </div>
                         </div>
@@ -187,3 +186,73 @@
     </section>
 
 @endsection
+@push('scripts')
+    <script>
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content'),
+            }
+        });
+
+        var category_slug = "";
+
+        if ($(".resource_category").hasClass('active')) {
+            category_slug = $(".resource_category.active").attr('data-slug');
+            get_resources(category_slug);
+        }
+
+        $(".resource_category").on('click', function() {
+            var category_slug = $(this).attr('data-slug');
+            get_resources(category_slug);
+        });
+
+
+        function get_resources(category_slug, year = "", month = "") {
+            var formdata = new FormData();
+            formdata.append('category_slug', category_slug);
+            formdata.append('year', year);
+            formdata.append('month', month);
+            $.ajax({
+                url: "{{ route('resources.get_resources') }}",
+                method: 'POST',
+                data: formdata,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                beforeSend: function() {},
+                success: function(response) {
+                    //console.log(response);
+                    var html = '';
+                    response.resources.forEach(element => {
+                        html +=
+                            '<div class="resou-content br-btm"><p class="desc-line1"><i class="fa fa-calendar"></i>' +
+                            element.created_date;
+
+                        if (element.resource_file) {
+                            html += '&nbsp;&nbsp;<a href="' + element.resource_file +
+                                '"><i class="fa fa-file"></i> PDF</a>';
+                        }
+
+                        html += '</p><a href="' + element.resource_url +
+                            '" target="_blank"><h4 class="resou-head">' + element
+                            .resource_title + '</h4><p class="resour-para">' + element
+                            .resource_short_desc + '</p></a><a href="' + element.resource_url +
+                            '" target="_blank" class="icon-read-more">Read More <img src="{{ asset('assets/img/arrow-right.svg') }}" class="img-fluid btn-arrow"></a> </div>';
+                    });
+                    $(".resource_tab .resource_list").html("");
+                    $(".resource_tab .resource_list").html(html);
+
+                    if (response.months) {
+                        var months_option = '<option value="">Select</option>';
+                        response.months.forEach(element => {
+                            months_option += '<option value="' + element.month_number + '">' + element.resource_month + '</option>';
+                        });
+
+                        $(".resource_tab.active .month_filter").html("");
+                        $(".resource_tab.active .month_filter").html(months_option);
+                    }
+                }
+            });
+        }
+    </script>
+@endpush

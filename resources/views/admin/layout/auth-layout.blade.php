@@ -15,6 +15,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>@yield('pageTitle')</title>
+
+    {{-- Shortcut Icon --}}
+    <link rel="shortcut icon" href="{{ asset('assets/img/gbc-logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/img/gbc-logo.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/img/gbc-logo.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('assets/img/gbc-logo.png') }}">
+
     <!-- CSS files -->
     <link href="{{ asset('admin/dist/css/tabler.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('admin/dist/css/tabler-flags.min.css') }}" rel="stylesheet" />

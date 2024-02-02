@@ -19,7 +19,12 @@
     <meta http-equiv="Expires" content="0" />
     <title>@yield('pageTitle')</title>
 
-    <link rel="shortcut icon" href="" type="image/x-icon">
+    {{-- Shortcut Icon --}}
+    <link rel="shortcut icon" href="{{ asset('assets/img/gbc-logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/img/gbc-logo.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/img/gbc-logo.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('assets/img/gbc-logo.png') }}">
+
     <!-- CSS files -->
     <link rel="stylesheet" href="{{ asset('admin/dist/css/tabler.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('admin/dist/css/tabler-flags.min.css') }}" />

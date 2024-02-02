@@ -21,7 +21,6 @@
     <meta property="og:title" content="{{ (isset($meta_title) && $meta_title != "") ? $meta_title : "GBCA & Associates LLP Chartered Accountants" }}">
     <meta property="og:type" content="website" />
     <meta property="og:description" content="{{ (isset($meta_desc) && $meta_desc != "") ? $meta_desc : "GBCA & Associates LLP Chartered Accountants" }}">
-    <link rel="canonical" href="{{ url()->current(); }}">
     <meta property="og:url" content="{{ url()->current(); }}" />
     <meta property="og:image" content="{{ (isset($meta_image) && $meta_image != "") ? $meta_image : asset('assets/img/gbc-logo.png'); }}">
     <meta name="twitter:card" content="{{ asset('assets/img/gbc-logo.png') }}">
@@ -34,6 +33,7 @@
     <link rel="apple-touch-icon" href="{{ asset('assets/img/gbc-logo.png') }}">
     <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/img/gbc-logo.png') }}">
     <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('assets/img/gbc-logo.png') }}">
+    <link rel="canonical" href="{{ url()->current(); }}">
 
     {{-- Google Fonts --}}
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">

@@ -35,9 +35,12 @@ Route::prefix('services')->name('services.')->group(function () {
 });
 
 Route::prefix('resources')->name('resources.')->group(function () {
-    Route::view('/', 'frontend.pages.resources')->name('all');
+    Route::get('/',  [HomeController::class, 'resource_category'])->name('all');
     Route::get('/{category}', [HomeController::class, 'resource_category'])->name('resource_category');
+    Route::post('/get_resources', [HomeController::class, 'get_resources'])->name('get_resources');
 });
+
+Route::get('/resource/{any}', [HomeController::class, 'read_resource'])->name('resource');
 
 Route::view('/industries', 'frontend.pages.industries')->name('industries');
 Route::view('/careers', 'frontend.pages.careers')->name('careers');

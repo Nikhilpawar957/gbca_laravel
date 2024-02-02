@@ -58,13 +58,13 @@
                                 <label for="resource_category_id" class="form-label required">Category</label>
                                 <select class="form-select" id="resource_category_id" name="resource_category_id">
                                     <option value="">Select Category</option>
-                                    @foreach (\App\Models\Category::where('parent_category', '=', 0)->get() as $category)
+                                    @foreach (\App\Models\Category::whereNull('parent_category')->get() as $category)
                                         <option value="{{ $category->id }}" {{ $category->id == $resource->resource_category_id ? 'selected' : '' }}>{{ $category->category_name }}</option>
                                     @endforeach
                                 </select>
                                 <span class="error small text-danger resource_category_id_error"></span>
                             </div>
-                            <div class="mb-3 subcat {{ $resource->resource_category_id == 0 ? 'd-none' : '' }}">
+                            <div class="mb-3 subcat {{ ($resource->resource_subcategory_id == null) ? 'd-none' : '' }}">
                                 <label for="resource_subcategory_id" class="form-label required">SubCategory</label>
                                 <select class="form-select" id="resource_subcategory_id" name="resource_subcategory_id">
                                     <option value="0">Select SubCategory</option>
