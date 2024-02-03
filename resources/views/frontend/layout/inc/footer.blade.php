@@ -125,26 +125,35 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <section class="contact-us modal-form">
                     <div class="row">
-                        <div class="alert alert-danger errmsg2 text-center" style="display:none;"></div>
                         <div class="col-lg-12 col-md-12">
+                            <div class="alert alert-danger errmsg text-center" style="display:none;"></div>
+                            <div class="alert alert-success successmsg text-center" style="display:none;"></div>
                             <div class="form-section">
-                                <form id="contact" class="contact-form1" action="" method="post">
+                                <form id="profileForm" class="contact-form1"
+                                    action="{{ route('profile-form-submit') }}" method="post">
                                     <div class="contact-form__two">
                                         <div class="row">
                                             <div class="field contact-inner text-left col-lg-12">
-                                                <input type="text" name="p_name" id="p_name"
-                                                    placeholder="Enter Name">
-                                                <label for="p_name">Name</label>
+                                                <span class="text-danger error-text full_name_error"></span>
+                                                <input type="text" name="full_name" id="full_name"
+                                                    placeholder="Enter Full Name" maxlength="255">
+                                                <label for="fullname">Full Name <span
+                                                        class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner text-left col-lg-12 mb-0">
-                                                <input type="email" name="p_email" id="p_email"
-                                                    placeholder="Enter E-mail">
-                                                <label for="p_email">E-mail</label>
+                                                <span class="text-danger error-text email_error"></span>
+                                                <input type="text" name="email" id="email"
+                                                    placeholder="Enter E-mail" maxlength="255">
+                                                <label for="email">E-mail <span
+                                                        class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner text-left col-lg-12 mb-0">
-                                                <input type="tel" name="p_phone" id="p_phone"
-                                                    placeholder="Enter Contact Number">
-                                                <label for="p_phone">Contact Number</label>
+                                                <span class="text-danger error-text phone_error"></span>
+                                                <input type="tel" name="phone" id="phone"
+                                                    placeholder="Enter Contact Number" maxlength="10"
+                                                    onkeypress="return phone_validate(event)">
+                                                <label for="phone">Contact Number <span
+                                                        class="text-danger">*</span></label>
                                             </div>
                                         </div>
                                         <div class="comment-submit-btn modal-btn">

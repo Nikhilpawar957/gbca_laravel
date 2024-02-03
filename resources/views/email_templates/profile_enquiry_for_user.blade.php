@@ -19,8 +19,7 @@
             <div class="row">
                 <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">Hello <b>{{ $full_name }}</b>,
                 </p>
-                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">Thanks a lot for enquiring.
-                    We shall get back to you shortly on your submitted details as follows:-</p>
+                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">Thank you for connecting with us! We are hereby obliged to assist you with our company profile for your perusal.<br>Kindly find the attachment with the mail.</p>
             </div>
             <div class="row">
                 <div>
@@ -28,7 +27,6 @@
                         <strong>Name:</strong> {{ $full_name }}<br />
                         <strong>E-mail:</strong> {{ $email }}<br />
                         <strong>Mobile:</strong>{{ $phone }} <br />
-                        <strong>Message:</strong> {{ $messages }} <br />
                     </p><br />
                 </div>
             </div><br />

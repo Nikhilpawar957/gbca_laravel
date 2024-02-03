@@ -31,10 +31,15 @@ class ResourcesFactory extends Factory
         $randomTimestamp = rand($startTimestamp, $endTimestamp);
 
         return [
-            'resource_category_id' => Category::whereNull('parent_category')->get()->random()->id,
-            //'resource_subcategory_id' => Category::where('parent_category', '=',4)->get()->random()->id,
-            'resource_title' => $this->faker->text(20),
-            'resource_slug' => Str::slug($this->faker->text(10)),
+
+            // Uncomment only resource_category_id
+            //'resource_category_id' => Category::whereNull('parent_category')->get()->random()->id,
+            //'resource_subcategory_id' => Category::whereNotNull('parent_category')->get()->random()->id,
+
+            'resource_category_id' => 7,
+            'resource_subcategory_id' => Category::whereNotNull('parent_category')->get()->random()->id,
+            'resource_title' => $this->faker->unique()->text(20),
+            'resource_slug' => Str::slug($this->faker->unique()->text(10)),
             'resource_short_desc' => $this->faker->text(250),
             'resource_desc' => $this->faker->randomHtml(),
             'resource_image' => $this->faker->imageUrl(20, 20),

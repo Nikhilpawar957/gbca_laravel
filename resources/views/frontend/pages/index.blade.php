@@ -48,7 +48,9 @@
                         <h2>India Union Budget 2023</h2>
                     </div>
                     <div class="col-lg-3 col-md-4">
-                        <div class="banner-cta-btn"><a href="{{ route('resources.resource_category',['category'=> 'union-budget']) }}" class="orange-btn">Read
+                        <div class="banner-cta-btn"><a
+                                href="{{ route('resources.resource_category', ['category' => 'union-budget']) }}"
+                                class="orange-btn">Read
                                 More <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
                                     class="img-fluid btn-arrow"></a></div>
                     </div>
@@ -365,15 +367,15 @@
                 </div>
                 <div class="col-lg-4 col-md-4">
                     <div class="head-btn d-none d-lg-block d-md-block">
-                        <a href="{{ route('resources.all') }}">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
-                                class="img-fluid btn-arrow"></a>
+                        <a href="{{ route('resources.all') }}">View all <img
+                                src="{{ asset('assets/img/arrow-right-white.svg') }}" class="img-fluid btn-arrow"></a>
                     </div>
                 </div>
             </div>
             <div class="col-lg-12">
                 <div class="head-btn d-block d-lg-none d-md-none">
-                    <a href="{{ route('resources.all') }}">View all <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
-                            class="img-fluid btn-arrow"></a>
+                    <a href="{{ route('resources.all') }}">View all <img
+                            src="{{ asset('assets/img/arrow-right-white.svg') }}" class="img-fluid btn-arrow"></a>
                 </div>
             </div>
         </div>
@@ -402,30 +404,34 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-section home-contact">
-                                <form id="contact" class="contact-form1" method="post">
-                                    <div class="alert alert-danger errmsg text-center" id="success_register"
-                                        style="display:none; margin-bottom:0px;padding:10px;"></div>
+                                <form id="contact" class="contact-form1" action="{{ route('contact-form-submit') }}"
+                                    method="post">
+                                    <div class="alert alert-danger text-center" id="danger_register"
+                                        style="display:none; margin-top:20px"></div>
+                                    <div class="alert alert-success text-center" id="success_register"
+                                        style="display:none; margin-top:20px"></div>
                                     <div class="contact-form__two">
                                         <div class="row">
                                             <div class="field contact-inner text-left col-lg-12">
-                                                <input type="text" name="fullname20" id="fullname20"
-                                                    placeholder="Enter Full Name">
-                                                <label for="fullname20">Full Name</label>
+                                                <span class="text-danger error-text full_name_error"></span>
+                                                <input type="text" name="full_name" id="full_name" placeholder="Enter Full Name" maxlength="255">
+                                                <label for="fullname">Full Name <span class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner text-left col-lg-12 mb-0">
-                                                <input type="email" name="email20" id="email20"
-                                                    placeholder="Enter E-mail">
-                                                <label for="email20">E-mail</label>
+                                                <span class="text-danger error-text email_error"></span>
+                                                <input type="text" name="email" id="email" placeholder="Enter E-mail" maxlength="255">
+                                                <label for="email">E-mail <span class="text-danger">*</span></label>
                                             </div>
-
                                             <div class="field contact-inner text-left col-lg-12 mb-0">
-                                                <input type="tel" name="phone20" id="phone20"
-                                                    placeholder="Enter Contact Number">
-                                                <label for="phone20">Contact Number</label>
+                                                <span class="text-danger error-text phone_error"></span>
+                                                <input type="tel" name="phone" id="phone"
+                                                    placeholder="Enter Contact Number" maxlength="10" onkeypress="return phone_validate(event)">
+                                                <label for="phone">Contact Number <span class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner col-lg-12 text-left">
-                                                <textarea name="massage20" id="massage20" placeholder="Enter message here"></textarea>
-                                                <label for="massage20">Write a Message</label>
+                                                <span class="text-danger error-text message_error"></span>
+                                                <textarea name="message" id="message" placeholder="Enter message here"></textarea>
+                                                <label for="massage">Write a Message</label>
                                             </div>
                                         </div>
 
@@ -439,7 +445,8 @@
                                 </form>
                             </div>
                             <div class="cta-btn d-block d-lg-none d-md-none">
-                                <a href="#" class="trasf-btn">Contact Us <img src="assets/img/blue-arrow.png" class="img-fluid btn-arrow"></a>
+                                <a href="#" class="trasf-btn">Contact Us <img src="assets/img/blue-arrow.png"
+                                        class="img-fluid btn-arrow"></a>
                             </div>
                         </div>
                     </div>
@@ -557,5 +564,48 @@
                 centerPadding: 0,
             });
         })(jQuery);
+    </script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content'),
+            }
+        });
+
+        $("form#contact").submit(function(e) {
+            e.preventDefault();
+            var form = this;
+            var formdata = new FormData(form);
+            $.ajax({
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: formdata,
+                processData: false,
+                dataType: "json",
+                contentType: false,
+                beforeSend: function() {
+                    $(form).find('span.error-text').text('');
+                    $(form).find('button[type="submit"]').html('Please Wait...');
+                },
+                success: function(response) {
+                    //console.log(response);
+                    if (response.code == 1) {
+                        $(form)[0].reset();
+                        $("#success_register").text(response.msg);
+                        $("#success_register").slideDown("slow").delay(5000).slideUp();
+                    } else {
+                        $("#danger_register").text(response.msg);
+                        $("#danger_register").slideDown("slow").delay(5000).slideUp();
+                    }
+                    $(form).find('button[type="submit"]').html('Submit');
+                },
+                error: function(response) {
+                    $.each(response.responseJSON.errors, function(prefix, val) {
+                        $(form).find('span.' + prefix + '_error').text(val[0]);
+                    });
+                    $(form).find('button[type="submit"]').html('Submit');
+                }
+            });
+        });
     </script>
 @endpush

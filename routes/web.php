@@ -49,3 +49,4 @@ Route::view('/alumni-login', 'frontend.pages.alumni-login')->name('alumni-login'
 
 // Contact Form Submit
 Route::post('/contact-form-submit', [HomeController::class, 'contact_form_submit'])->name('contact-form-submit');
+Route::post('/profile-form-submit', [HomeController::class, 'profile_form_submit'])->name('profile-form-submit');

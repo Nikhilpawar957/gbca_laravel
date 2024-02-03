@@ -28,7 +28,7 @@
                         <strong>Name:</strong> {{ $full_name }}<br />
                         <strong>E-mail:</strong> {{ $email }}<br />
                         <strong>Mobile:</strong>{{ $phone }} <br />
-                        <strong>Message:</strong> {{ $message }} <br />
+                        <strong>Message:</strong> {{ $messages }} <br />
                     </p><br />
                 </div>
             </div><br />

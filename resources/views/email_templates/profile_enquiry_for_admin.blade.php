@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -15,12 +15,12 @@
         <div style="width: 100%;">
             <h3
                 style="text-align: center; font-weight: 600;color: #b58134;font-size: 26px;margin-top: 10px;margin-bottom: 10px;">
-                Thank you</h3>
+                Enquiry Mail Received
+            </h3>
             <div class="row">
-                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">Hello <b>{{ $full_name }}</b>,
-                </p>
-                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">Thanks a lot for enquiring.
-                    We shall get back to you shortly on your submitted details as follows:-</p>
+                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">Hello <b>Team</b>,</p>
+                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">You have received a Enquiry.
+                    The details are as follow:- </p>
             </div>
             <div class="row">
                 <div>
@@ -28,7 +28,6 @@
                         <strong>Name:</strong> {{ $full_name }}<br />
                         <strong>E-mail:</strong> {{ $email }}<br />
                         <strong>Mobile:</strong>{{ $phone }} <br />
-                        <strong>Message:</strong> {{ $messages }} <br />
                     </p><br />
                 </div>
             </div><br />
@@ -41,6 +40,7 @@
             </div>
         </div>
     </div>
+
 </body>
 
 </html>

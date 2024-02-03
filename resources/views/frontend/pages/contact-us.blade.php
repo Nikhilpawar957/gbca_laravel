@@ -43,19 +43,19 @@
                                 <div class="row">
                                     <div class="field contact-inner text-left col-lg-12">
                                         <span class="text-danger error-text full_name_error"></span>
-                                        <input type="text" name="full_name" id="full_name" placeholder="Enter Full Name">
-                                        <label for="fullname">Full Name</label>
+                                        <input type="text" name="full_name" id="full_name" placeholder="Enter Full Name" maxlength="255">
+                                        <label for="fullname">Full Name <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
                                         <span class="text-danger error-text email_error"></span>
-                                        <input type="text" name="email" id="email" placeholder="Enter E-mail">
-                                        <label for="email">E-mail</label>
+                                        <input type="text" name="email" id="email" placeholder="Enter E-mail" maxlength="255">
+                                        <label for="email">E-mail <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
                                         <span class="text-danger error-text phone_error"></span>
                                         <input type="tel" name="phone" id="phone"
-                                            placeholder="Enter Contact Number">
-                                        <label for="phone">Contact Number</label>
+                                            placeholder="Enter Contact Number" maxlength="10" onkeypress="return phone_validate(event)">
+                                        <label for="phone">Contact Number <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner col-lg-12 text-left">
                                         <span class="text-danger error-text message_error"></span>
@@ -75,16 +75,16 @@
                 <div class="col-lg-6 col-md-5">
                     <div class="contact-info">
                         <p>
-                            <img src="{{ asset('assets/img/icons/contact/call.png') }}" class="contact-icon">
+                            <a href="tel:+912233213737"><img src="{{ asset('assets/img/icons/contact/call.png') }}" class="contact-icon"></a>
                             +912233213737
                         </p>
                         <p>
-                            <img src="{{ asset('assets/img/icons/contact/email.png') }}" class="contact-icon">
+                            <a href="mailto:reachus@gbcaindia.com"><img src="{{ asset('assets/img/icons/contact/email.png') }}" class="contact-icon"></a>
                             reachus@gbcaindia.com
                         </p>
                         <div class="addr">
                             <div class="icon">
-                                <img src="{{ asset('assets/img/icons/contact/location.png') }}" class="contact-icon-diff">
+                                <a href="https://maps.app.goo.gl/szJHWK8rBuM8z5Ui8" target="_blank"><img src="{{ asset('assets/img/icons/contact/location.png') }}" class="contact-icon-diff"></a>
                             </div>
                             <p> Benefice Business House, 3rd Level, 126, Mathuradas Mills Compound, N. M. Joshi Marg, Lower
                                 Parel (W), Mumbai - 400013, India.</p>

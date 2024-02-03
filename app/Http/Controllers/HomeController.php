@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Resources;
 use Illuminate\Http\Request;
 use App\Models\ContactForm;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +18,7 @@ class HomeController extends Controller
         $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
-            'phone' => ['required', 'numeric'],
+            'phone' => ['required', 'min:10'],
         ]);
 
         $response = array();
@@ -26,7 +27,7 @@ class HomeController extends Controller
             'full_name' => $request->full_name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'message' => $request->message,
+            'messages' => $request->message,
         ];
 
         $save_contact_form = ContactForm::create($data);
@@ -34,8 +35,8 @@ class HomeController extends Controller
 
         // Send Email to Admin
         Mail::send('email_templates.enquiry_for_admin', $data, function ($message) use ($data) {
-            $from = env('MAIL_USERNAME');
-            $to = "reachus@gbcaindia.com";
+            $from = "nikhil.pawar@onerooftech.com";
+            $to = "nikhil.pawar@onerooftech.com";
             $subject = "Regarding : Enquiry from " . $data['full_name'];
 
             $message->from($from, env('APP_NAME'));
@@ -44,7 +45,7 @@ class HomeController extends Controller
 
         // Send Email to User
         Mail::send('email_templates.enquiry_for_user', $data, function ($message) use ($data) {
-            $from = env('MAIL_USERNAME');
+            $from = "nikhil.pawar@onerooftech.com";
             $to = $data['email'];
             $subject = "Thank you for your Enquiry";
 
@@ -53,6 +54,66 @@ class HomeController extends Controller
         });
 
         if ($save_contact_form) {
+            $response = array(
+                'code' => 1,
+                'msg' => 'Your Enquiry is sent Successfully!!'
+            );
+        } else {
+            $response = array(
+                'code' => 3,
+                'msg' => 'Something went wrong! Please Try Later'
+            );
+        }
+
+        return response()->json($response);
+    }
+
+    public function profile_form_submit(Request $request){
+        $request->validate([
+            'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone' => ['required', 'min:10'],
+        ]);
+
+        $response = array();
+
+        $data = [
+            'full_name' => $request->full_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ];
+
+        $save_profile_form = DB::table('profile_form')->insert($data);
+
+        $files = [
+            public_path('assets/docs/GBCA-Profile.pdf'),
+        ];
+
+        // Send Email to Admin
+        Mail::send('email_templates.profile_enquiry_for_admin', $data, function ($message) use ($data) {
+            $from = "nikhil.pawar@onerooftech.com";
+            $to = "nikhil.pawar@onerooftech.com";
+            $subject = "GBCA-India Pvt. Ltd. Feedback Received From " . $data['full_name'];
+
+            $message->from($from, env('APP_NAME'));
+            $message->to($to, 'GBCAIndia')->subject($subject);
+        });
+
+        // Send Email to User
+        Mail::send('email_templates.profile_enquiry_for_user', $data, function ($message) use ($data, $files) {
+            $from = "nikhil.pawar@onerooftech.com";
+            $to = $data['email'];
+            $subject = "Thank you for your Enquiry";
+            foreach ($files as $file){
+                $message->attach($file);
+            }
+            $message->from($from, env('APP_NAME'));
+            $message->to($to, $data['full_name'])->subject($subject);
+        });
+
+        if ($save_profile_form) {
             $response = array(
                 'code' => 1,
                 'msg' => 'Your Enquiry is sent Successfully!!'
@@ -90,7 +151,7 @@ class HomeController extends Controller
                     ->selectRaw("DISTINCT DATE_FORMAT(created_at, '%Y') AS resource_years")
                     ->where('resource_category_id', '=', $first_category->id)
                     ->whereNull('deleted_at')
-                    ->orderBy('resource_years')
+                    ->orderByDesc('resource_years')
                     ->get()->toArray();
 
                 $response = [
@@ -109,9 +170,9 @@ class HomeController extends Controller
                 // Get Years
                 $get_years = DB::table('resources')
                     ->selectRaw("DISTINCT DATE_FORMAT(created_at, '%Y') AS resource_year")
-                    ->where('resource_category_id', '=', $category_exists->id)
+                    ->whereRaw('(resource_category_id = ? OR resource_subcategory_id = ?)', [$category_exists->id, $category_exists->id])
                     ->whereNull('deleted_at')
-                    ->orderBy('resource_year')
+                    ->orderByDesc('resource_year')
                     ->get()->toArray();
 
                 $response = [
@@ -139,9 +200,12 @@ class HomeController extends Controller
                     ]);
 
                     $get_resources = DB::table('resources')
-                        ->selectRaw('resource_title, resource_short_desc')
+                        ->selectRaw("resource_title, resource_short_desc, resource_slug, resource_file, resource_image")
+                        ->selectRaw("DATE_FORMAT(created_at, '%b %e, %Y') AS created_date")
                         ->whereRaw('(resource_category_id = ? OR resource_subcategory_id = ?)', [$first_category->id, $first_category->id])
                         ->whereNull('deleted_at')
+                        ->orderByDesc('created_at')
+                        ->limit(4)
                         ->get();
 
                     foreach ($get_resources as $key => $value) {
@@ -156,6 +220,9 @@ class HomeController extends Controller
                 if (!$category_exists) {
                     abort(404);
                 } else {
+
+                    DB::enableQueryLog();
+
                     $get_resources = DB::table('resources')
                         ->selectRaw("resource_title, resource_short_desc, resource_slug, resource_file, resource_image")
                         ->selectRaw("DATE_FORMAT(created_at, '%b %e, %Y') AS created_date")
@@ -174,12 +241,16 @@ class HomeController extends Controller
 
                     if ($request->search != null && $request->search != "") {
 
-                        $search = "'%" . $request->search . "%'";
+                        $search = "%" . $request->search . "%";
 
                         $get_resources->whereRaw("resource_title LIKE ? OR resource_short_desc LIKE ? OR resource_slug LIKE ? ", [$search, $search, $search]);
                     }
 
                     $get_resources = $get_resources->get()->toArray();
+
+                    // $quries = DB::getQueryLog();
+
+                    // dd($quries);
 
                     if ($request->year != null && $request->year != "" && $request->month == null && $request->month == "") {
                         // Get Months

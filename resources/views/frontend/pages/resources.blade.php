@@ -96,20 +96,31 @@
                                         }
                                     @endphp
                                     <a href="javascript:void(0);"
-                                        class="nav-link resource_category {{ $hasSubcat }} {{ Request('category') == $category->category_slug ? 'active' : '' }}"
-                                        id="v-pills-{{ $category->category_slug }}-tab" data-bs-toggle="pill"
-                                        data-bs-target="#v-pills-{{ $category->category_slug }}" type="button"
-                                        data-slug="{{ $category->category_slug }}"" role="tab"
-                                        aria-controls="v-pills-{{ $category->category_slug }}" aria-selected="true">
+                                        class="nav-link {{ ($hasSubcat !== "" ? $hasSubcat : 'resource_category') }} {{ Request('category') == $category->category_slug ? 'active' : '' }}"
+                                        id="v-pills-{{ $category->category_slug }}-tab"
+                                        @if ($hasSubcat == '') data-bs-toggle="pill"
+                                            data-bs-target="#v-pills-{{ $category->category_slug }}"
+                                            aria-controls="v-pills-{{ $category->category_slug }}"
+                                        type="button"  role="tab" @endif data-slug="{{ $category->category_slug }}">
                                         <div class="d-flex align-items-center justify-content-center me-3">
                                             <img src="{{ asset('storage/' . $category->category_image) }}">
                                         </div>
                                         {{ $category->category_name }}
+                                        @if ($hasSubcat !== '')
+                                            <i class="fa fa-angle-down res-news-drop" aria-hidden="true"></i>
+                                        @endif
                                     </a>
                                     @if ($subcategories->isNotEmpty())
                                         <div class="newsletter-sub" style="display: none;">
                                             @foreach ($subcategories as $key => $subcategory)
-                                                <a href="javascript:void(0);" class="nav-link br-btm-n br-tp-n">
+                                                <a href="javascript:void(0);" class="nav-link br-btm-n br-tp-n resource_category
+                                                    {{ Request('category') == $subcategory->category_slug ? 'active' : '' }}"
+                                                    id="v-pills-{{ $subcategory->category_slug }}-tab"
+                                                    data-bs-toggle="pill"
+                                                    data-bs-target="#v-pills-{{ $subcategory->category_slug }}"
+                                                    aria-controls="v-pills-{{ $subcategory->category_slug }}"
+                                                    type="button" data-slug="{{ $subcategory->category_slug }}"
+                                                    role="tab">
                                                     {{ $subcategory->category_name }}
                                                 </a>
                                             @endforeach
@@ -120,7 +131,7 @@
                         </div>
                         <div class="col-lg-9">
                             <div class="tab-content resources-tabs" id="v-pills-tabContent">
-                                @foreach (\App\Models\Category::whereNull('parent_category')->get() as $category)
+                                @foreach (\App\Models\Category::all() as $category)
                                     <div class="tab-pane fade resource_tab {{ Request('category') == $category->category_slug ? 'show active' : '' }}"
                                         id="v-pills-{{ $category->category_slug }}" role="tabpanel"
                                         aria-labelledby="v-pills-{{ $category->category_slug }}-tab">
@@ -131,9 +142,10 @@
                                                         <p>Year:</p>
                                                         <select class="year_filter" id="year_{{ $category->id }}"
                                                             onchange="return get_resources('{{ $category->category_slug }}',this.value,'')">
-                                                            <option value="">Select</option>
                                                             @foreach ($years as $year)
-                                                                <option value="{{ $year->resource_year }}">
+                                                                <option
+                                                                    {{ $year->resource_year == date('Y') ? 'selected' : '' }}
+                                                                    value="{{ $year->resource_year }}">
                                                                     {{ $year->resource_year }}</option>
                                                             @endforeach
                                                         </select>
@@ -149,8 +161,10 @@
                                             </div>
                                             <div class="col-lg-5 col-md-8">
                                                 <div class="search">
-                                                    <input type="text" class="searchTerm" placeholder="Search">
-                                                    <button type="submit" class="searchButton">
+                                                    <input type="text" id="search_{{ $category->id }}" name="search"
+                                                        class="searchTerm" placeholder="Search">
+                                                    <button type="button" class="searchButton"
+                                                        onclick="return get_resources('{{ $category->category_slug }}',$('#year_{{ $category->id }}').val(),$('#month_{{ $category->id }}').val(),$('#search_{{ $category->id }}').val())">
                                                         <img src="{{ asset('assets/img/resources/search_black.png') }}"
                                                             class="img-fluid">
                                                     </button>
@@ -196,8 +210,11 @@
 
         var category_slug = "";
 
-        if ($(".resource_category").hasClass('active')) {
+        if ($(".resource_category").hasClass('active') || $(".newsletter-main").hasClass('active')) {
             category_slug = $(".resource_category.active").attr('data-slug');
+            if (category_slug == undefined) {
+                category_slug = $(".newsletter-main.active").attr('data-slug');
+            }
             get_resources(category_slug);
         }
 
@@ -207,11 +224,33 @@
         });
 
 
-        function get_resources(category_slug, year = "", month = "") {
+        $(".newsletter-main").click(function() {
+            $(".newsletter-sub").slideToggle(500);
+        });
+
+        if ($(".newsletter-sub a").hasClass("active")) {
+            $(".newsletter-sub").slideToggle(500);
+        }
+
+        $(".newsletter-sub a").click(function() {
+            if ($(this).hasClass("active")) {
+                $(this).siblings('a').toggleClass("active");
+            }
+        });
+
+        $(".service-tabs a").click(function() {
+            if ($(".newsletter-sub a").hasClass("active")) {
+                $(".newsletter-sub a").removeClass("active");
+            }
+        });
+
+
+        function get_resources(category_slug, year = "", month = "", search = "") {
             var formdata = new FormData();
             formdata.append('category_slug', category_slug);
             formdata.append('year', year);
             formdata.append('month', month);
+            formdata.append('search', search);
             $.ajax({
                 url: "{{ route('resources.get_resources') }}",
                 method: 'POST',
@@ -245,7 +284,8 @@
                     if (response.months) {
                         var months_option = '<option value="">Select</option>';
                         response.months.forEach(element => {
-                            months_option += '<option value="' + element.month_number + '">' + element.resource_month + '</option>';
+                            months_option += '<option value="' + element.month_number + '">' + element
+                                .resource_month + '</option>';
                         });
 
                         $(".resource_tab.active .month_filter").html("");
