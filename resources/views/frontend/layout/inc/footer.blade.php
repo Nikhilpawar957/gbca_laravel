@@ -137,7 +137,7 @@
                                                 <span class="text-danger error-text full_name_error"></span>
                                                 <input type="text" name="full_name" id="full_name"
                                                     placeholder="Enter Full Name" maxlength="255">
-                                                <label for="fullname">Full Name <span
+                                                <label for="full_name">Full Name <span
                                                         class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner text-left col-lg-12 mb-0">

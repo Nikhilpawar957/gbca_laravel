@@ -6,10 +6,13 @@ use App\Models\Category;
 use App\Models\Resources;
 use Illuminate\Http\Request;
 use App\Models\ContactForm;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class HomeController extends Controller
 {
@@ -68,7 +71,8 @@ class HomeController extends Controller
         return response()->json($response);
     }
 
-    public function profile_form_submit(Request $request){
+    public function profile_form_submit(Request $request)
+    {
         $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
@@ -106,7 +110,7 @@ class HomeController extends Controller
             $from = "nikhil.pawar@onerooftech.com";
             $to = $data['email'];
             $subject = "Thank you for your Enquiry";
-            foreach ($files as $file){
+            foreach ($files as $file) {
                 $message->attach($file);
             }
             $message->from($from, env('APP_NAME'));
@@ -256,10 +260,10 @@ class HomeController extends Controller
                         // Get Months
                         $get_months = DB::table('resources')
                             ->selectRaw("DISTINCT DATE_FORMAT(created_at, '%b') AS resource_month, MONTH(created_at) AS month_number")
-                            ->where('resource_category_id', '=', $category_exists->id)
+                            ->whereRaw("(resource_category_id = ? OR resource_subcategory_id = ?)", [$category_exists->id, $category_exists->id])
                             ->whereYear('created_at', $request->year)
                             ->whereNull('deleted_at')
-                            ->orderByDesc('id')
+                            ->orderByDesc('month_number')
                             ->get()->toArray();
                     } else {
                         $get_months = "";
@@ -309,5 +313,227 @@ class HomeController extends Controller
 
             return view('frontend.pages.resource-detail', $response);
         }
+    }
+
+    public function sign_up_form_submit(Request $request)
+    {
+        $request->validate([
+            'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'unique:users,email', 'max:255'],
+            'phone' => ['required', 'min:10', 'unique:users,phone', 'max:10'],
+            'doj' => ['required', 'numeric']
+        ], [
+            'fullname.required' => 'Full Name is Required',
+            'email.required' => 'Email is Required',
+            'phone.required' => 'Phone Number is Required',
+            'doj.required' => 'Year of joining is Required',
+        ]);
+
+        $data = [
+            'full_name' => $request->full_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'doj' => $request->doj,
+            'password' => Hash::make($request->phone)
+        ];
+
+        $save_user = User::create($data);
+
+        // Mail to Admin for User Signup
+        Mail::send('email_templates.new_user_signup', $data, function ($message) use ($data) {
+            $from = "nikhil.pawar@onerooftech.com";
+            $to = "nikhil.pawar@onerooftech.com";
+            $subject = "Regarding : New SignUp";
+
+            $message->from($from, env('APP_NAME'));
+            $message->to($to, 'GBCAIndia')->subject($subject);
+        });
+
+        // Mail to User for Signup
+        Mail::send('email_templates.thank_you_user', $data, function ($message) use ($data) {
+            $from = "nikhil.pawar@onerooftech.com";
+            $to = $data['email'];
+            $subject = "Thankyou For Registering With GBCA & Associates LLP. Please wait for Team Approval";
+
+            $message->from($from, env('APP_NAME'));
+            $message->to($to, $data['full_name'])->subject($subject);
+        });
+
+        if ($save_user) {
+            $response = array(
+                'code' => 1,
+                'msg' => 'Thankyou for registering with GBCA, Please Wait for Approval from Admin!!'
+            );
+        } else {
+            $response = array(
+                'code' => 3,
+                'msg' => 'Something went wrong! Please Try Later'
+            );
+        }
+
+        return response()->json($response);
+    }
+
+    public function send_otp(Request $request)
+    {
+        $response = array();
+
+        $fieldType = filter_var($request->login_id, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        if ($fieldType == 'email') {
+            $request->validate([
+                'login_id' => 'required|email|exists:users,email',
+            ], [
+                'login_id.required' => 'Email or Phone is required',
+                'login_id.email' => 'Invalid Email Address',
+                'login_id.exists' => 'Email is not Registered',
+            ]);
+        } else {
+            $request->validate([
+                'login_id' => 'required|exists:users,phone',
+            ], [
+                'login_id.required' => 'Email or Phone is required',
+                'login_id.exists' => 'Phone no. is not Registered',
+            ]);
+        }
+
+        $checkUser = User::where($fieldType, $request->login_id)->where('role', '=', 2)->first();
+
+        if ($checkUser) {
+
+            if ($checkUser->blocked == 1) {
+                $response = [
+                    'code' => 3,
+                    'msg' => 'Your Account has been rejected by admin'
+                ];
+            } else if ($checkUser->blocked == 2) {
+                $response = [
+                    'code' => 3,
+                    'msg' => 'Your Account has not been approved by admin'
+                ];
+            } else {
+
+                $data = [
+                    'name' => $checkUser->name,
+                    'phone' => $checkUser->phone,
+                    'email' => $checkUser->email,
+                    'otp' => rand(100000, 999999),
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ];
+
+                DB::table('otp_history')->whereRaw('phone = ? OR email = ?', [$request->login_id, $request->login_id])->update(['status' => 0]);
+
+                $insert_otp = DB::table('otp_history')->insert($data);
+
+                if ($insert_otp) {
+                    Mail::send('email_templates.send_otp', $data, function ($message) use ($checkUser) {
+
+                        $from = "nikhil.pawar@onerooftech.com";
+                        $to = $checkUser->email;
+                        $subject = "Regarding : Login OTP";
+
+                        $message->from($from, env('APP_NAME'));
+                        $message->to($to, $checkUser->name)->subject($subject);
+                    });
+
+                    $response = [
+                        'code' => 1,
+                        'msg' => 'Please check your email or phone for otp'
+                    ];
+                } else {
+                    $response = [
+                        'code' => 3,
+                        'msg' => 'Something went wrong'
+                    ];
+                }
+            }
+        } else {
+            $response = [
+                'code' => 3,
+                'msg' => 'User Does Not Exist'
+            ];
+        }
+
+        return response()->json($response);
+    }
+
+    public function confirm_otp(Request $request)
+    {
+
+        $response = array();
+
+        $fieldType = filter_var($request->login_id, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        if ($fieldType == 'email') {
+            $request->validate([
+                'login_id' => 'required|email|exists:users,email',
+                'otp' => 'required|numeric|min:6',
+            ], [
+                'login_id.required' => 'Email or Phone is required',
+                'login_id.email' => 'Invalid Email Address',
+                'login_id.exists' => 'Email is not Registered',
+            ]);
+        } else {
+            $request->validate([
+                'login_id' => 'required|exists:users,phone',
+                'otp' => 'required|numeric|min:6',
+            ], [
+                'login_id.required' => 'Email or Phone is required',
+                'login_id.exists' => 'Phone no. is not Registered',
+            ]);
+        }
+
+        $checkOTP = DB::table('otp_history')
+            ->where($fieldType, '=', $request->login_id)
+            ->where('otp', $request->otp)
+            ->where('status', '=', 1)
+            ->get();
+
+        if ($checkOTP->isNotEmpty()) {
+
+            DB::table('otp_history')->where($fieldType, '=', $request->login_id)->update(['status' => 0]);
+
+            $creds = array($fieldType => $request->login_id, 'role' => 2);
+
+            $user = Auth::getProvider()->retrieveByCredentials($creds);
+
+            Auth::login($user);
+
+            $response = [
+                'code' => 1,
+                'msg' => 'Logged in successfully'
+            ];
+        } else {
+            $response = [
+                'code' => 3,
+                'msg' => 'Invalid OTP or OTP Expired'
+            ];
+        }
+
+        return response()->json($response);
+    }
+
+    public function expire_otp(Request $request)
+    {
+        $response = array();
+
+        $fieldType = filter_var($request->login_id, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        $expire_otp = DB::table('otp_history')->where($fieldType, '=', $request->login_id)->update(['status' => 0]);
+
+        if ($expire_otp) {
+            $response = [
+                'code' => 1,
+                'msg' => 'OTP Expired'
+            ];
+        } else {
+            $response = [
+                'code' => 3,
+                'msg' => 'Something went wrong'
+            ];
+        }
+
+        return response()->json($response);
     }
 }

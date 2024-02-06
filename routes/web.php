@@ -50,3 +50,7 @@ Route::view('/alumni-login', 'frontend.pages.alumni-login')->name('alumni-login'
 // Contact Form Submit
 Route::post('/contact-form-submit', [HomeController::class, 'contact_form_submit'])->name('contact-form-submit');
 Route::post('/profile-form-submit', [HomeController::class, 'profile_form_submit'])->name('profile-form-submit');
+Route::post('/sign-up-form-submit', [HomeController::class, 'sign_up_form_submit'])->name('sign-up-form-submit');
+Route::post('/send-otp', [HomeController::class, 'send_otp'])->name('send-otp');
+Route::post('/confirm-otp', [HomeController::class, 'confirm_otp'])->name('confirm-otp');
+Route::post('/expire-otp', [HomeController::class, 'expire_otp'])->name('expire-otp');

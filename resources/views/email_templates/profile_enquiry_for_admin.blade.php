@@ -6,10 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Enquiry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div style="width: 60%;margin: 5% auto;height: auto;box-shadow: 0 0 2px #aaa;font-family: Hind;background: #dadada;">
+    <div style="width: 80%;margin: 5% auto;height: auto;box-shadow: 0 0 2px #aaa;font-family: Hind;background: #dadada;">
         <div style="width: 100%;background: #efefef;text-align: center;"><img
                 src="https://gbcaindia.com/images/gbc-llp-logo.png" style="max-width: 250px;padding:10px;"></div>
         <div style="width: 100%;">

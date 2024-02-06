@@ -96,12 +96,13 @@
                                         }
                                     @endphp
                                     <a href="javascript:void(0);"
-                                        class="nav-link {{ ($hasSubcat !== "" ? $hasSubcat : 'resource_category') }} {{ Request('category') == $category->category_slug ? 'active' : '' }}"
+                                        class="nav-link {{ $hasSubcat !== '' ? $hasSubcat : 'resource_category' }} {{ Request('category') == $category->category_slug ? 'active' : '' }}"
                                         id="v-pills-{{ $category->category_slug }}-tab"
                                         @if ($hasSubcat == '') data-bs-toggle="pill"
                                             data-bs-target="#v-pills-{{ $category->category_slug }}"
                                             aria-controls="v-pills-{{ $category->category_slug }}"
-                                        type="button"  role="tab" @endif data-slug="{{ $category->category_slug }}">
+                                        type="button"  role="tab" @endif
+                                        data-slug="{{ $category->category_slug }}">
                                         <div class="d-flex align-items-center justify-content-center me-3">
                                             <img src="{{ asset('storage/' . $category->category_image) }}">
                                         </div>
@@ -113,7 +114,8 @@
                                     @if ($subcategories->isNotEmpty())
                                         <div class="newsletter-sub" style="display: none;">
                                             @foreach ($subcategories as $key => $subcategory)
-                                                <a href="javascript:void(0);" class="nav-link br-btm-n br-tp-n resource_category
+                                                <a href="javascript:void(0);"
+                                                    class="nav-link br-btm-n br-tp-n resource_category
                                                     {{ Request('category') == $subcategory->category_slug ? 'active' : '' }}"
                                                     id="v-pills-{{ $subcategory->category_slug }}-tab"
                                                     data-bs-toggle="pill"
@@ -142,9 +144,8 @@
                                                         <p>Year:</p>
                                                         <select class="year_filter" id="year_{{ $category->id }}"
                                                             onchange="return get_resources('{{ $category->category_slug }}',this.value,'')">
-                                                            @foreach ($years as $year)
-                                                                <option
-                                                                    {{ $year->resource_year == date('Y') ? 'selected' : '' }}
+                                                            @foreach ($years as $key => $year)
+                                                                <option {{ $key == 0 ? 'selected' : '' }}
                                                                     value="{{ $year->resource_year }}">
                                                                     {{ $year->resource_year }}</option>
                                                             @endforeach

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Enquiry</title>
+    <title>Send OTP</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet">
@@ -18,20 +19,15 @@
         <div style="width: 100%;">
             <h3
                 style="text-align: center; font-weight: 600;color: #b58134;font-size: 26px;margin-top: 10px;margin-bottom: 10px;">
-                Enquiry Mail Received
-            </h3>
+                OTP Login</h3>
             <div class="row">
-                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">Hello <b>Team</b>,</p>
-                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">You have received a Enquiry.
-                    The details are as follow:- </p>
+                <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">Dear <b>{{ $name }}</b>,
+                </p>
             </div>
             <div class="row">
                 <div>
                     <p style="padding: 0px 10px 0px 20px; margin-bottom: 0px;font-size: 15px;">
-                        <strong>Name:</strong> {{ $full_name }}<br />
-                        <strong>E-mail:</strong> {{ $email }}<br />
-                        <strong>Mobile:</strong>{{ $phone }} <br />
-                        <strong>Message:</strong> {{ $messages }} <br />
+                        Your login request otp is {{ $otp }}<br/>
                     </p><br />
                 </div>
             </div><br />
@@ -44,7 +40,6 @@
             </div>
         </div>
     </div>
-
 </body>
 
 </html>
