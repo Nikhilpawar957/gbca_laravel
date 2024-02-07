@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AlumniController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,7 +51,15 @@ Route::view('/alumni-login', 'frontend.pages.alumni-login')->name('alumni-login'
 // Contact Form Submit
 Route::post('/contact-form-submit', [HomeController::class, 'contact_form_submit'])->name('contact-form-submit');
 Route::post('/profile-form-submit', [HomeController::class, 'profile_form_submit'])->name('profile-form-submit');
-Route::post('/sign-up-form-submit', [HomeController::class, 'sign_up_form_submit'])->name('sign-up-form-submit');
-Route::post('/send-otp', [HomeController::class, 'send_otp'])->name('send-otp');
-Route::post('/confirm-otp', [HomeController::class, 'confirm_otp'])->name('confirm-otp');
-Route::post('/expire-otp', [HomeController::class, 'expire_otp'])->name('expire-otp');
+Route::post('/sign-up-form-submit', [AlumniController::class, 'sign_up_form_submit'])->name('sign-up-form-submit');
+Route::post('/send-otp', [AlumniController::class, 'send_otp'])->name('send-otp');
+Route::post('/confirm-otp', [AlumniController::class, 'confirm_otp'])->name('confirm-otp');
+Route::post('/expire-otp', [AlumniController::class, 'expire_otp'])->name('expire-otp');
+
+// Alumni Logged in pages
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('view-profile', [AlumniController::class, 'view_profile'])->name('view-profile');
+    Route::get('edit-profile', [AlumniController::class, 'edit_profile'])->name('edit-profile');
+    Route::get('alumni-directory', [AlumniController::class, 'alumni_directory'])->name('alumni-directory');
+    Route::post('get-alumnis', [AlumniController::class, 'get_alumnis'])->name('get-alumnis');
+});

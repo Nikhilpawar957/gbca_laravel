@@ -293,11 +293,11 @@
                                                     <label for="phone">Contact Number</label>
                                                 </div>
                                                 <div class="field contact-inner text-left col-lg-12 mb-0">
-                                                    <span class="text-danger error-text doj_error"></span>
-                                                    <input type="text" name="doj" id="doj"
+                                                    <span class="text-danger error-text year_of_joining_error"></span>
+                                                    <input type="text" name="year_of_joining" id="year_of_joining"
                                                         onkeypress="return phone_validate(event)"
                                                         placeholder="Year of Joining" maxlength="4">
-                                                    <label for="doj">Year of Joining</label>
+                                                    <label for="year_of_joining">Year of Joining</label>
                                                 </div>
                                             </div>
                                             <div class="comment-submit-btn tabs-btn">
@@ -457,11 +457,15 @@
                     if (response.code == 1) {
                         $(".signInForm").find(".success_register").text(response.msg);
                         $(".signInForm").find(".success_register").slideDown("slow").delay(5000).slideUp();
+
+                        location.href="";
                     } else {
                         $(".signInForm").find(".danger_register").text(response.msg);
                         $(".signInForm").find(".danger_register").slideDown("slow").delay(5000).slideUp();
                     }
                     $(".signInForm").find('button').prop('disabled', false);
+
+
                 },
                 error: function(response) {
                     $.each(response.responseJSON.errors, function(prefix, val) {

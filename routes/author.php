@@ -12,7 +12,7 @@ Route::prefix('author')->name('author.')->group(function () {
         Route::get('/password/reset/{token}', [AuthorController::class, 'ResetForm'])->name('reset-form');
     });
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum','isAdmin'])->group(function () {
         Route::get('/home', [AuthorController::class, 'index'])->name('home');
         Route::post('/logout', [AuthorController::class, 'logout'])->name('logout');
         Route::view('/profile', 'admin.pages.profile')->name('profile');

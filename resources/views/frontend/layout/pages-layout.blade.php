@@ -16,7 +16,8 @@
         content="{{ isset($meta_title) && $meta_title != '' ? $meta_title : 'GBCA & Associates LLP Chartered Accountants' }}">
     <meta name="description"
         content="{{ isset($meta_desc) && $meta_desc != '' ? $meta_desc : 'GBCA & Associates LLP Chartered Accountants' }}">
-    <meta name="keywords" content="{{ isset($meta_keywords) && $meta_keywords != '' ? $meta_keywords : '' }}">
+    <meta name="keywords"
+        content="{{ isset($meta_keywords) && $meta_keywords != '' ? $meta_keywords : 'GBCA,Chartered Accountants' }}">
     <meta name="robots" content="index,follow">
 
     <!-- social responsibilities -->
@@ -83,12 +84,6 @@
     <script src="{{ asset('assets/js/custom_scripts.js') }}"></script>
 
     <script>
-        function phone_validate(key) {
-            var keycode = (key.which) ? key.which : key.keyCode;
-            if (!(keycode == 8 || keycode == 43 || keycode == 13) && (keycode < 48 || keycode > 57)) {
-                return false;
-            }
-        }
 
         $.ajaxSetup({
             headers: {

@@ -19,7 +19,7 @@ class UserFactory extends Factory
     public function definition()
     {
         $startTimestamp = strtotime('2000-01-01');
-        $endTimestamp = strtotime('2024-12-31');
+        $endTimestamp = strtotime('now');
 
         $randomTimestamp = rand($startTimestamp, $endTimestamp);
 
@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'username' => fake()->userName(),
             'phone' => fake()->unique()->phoneNumber(),
             'dob' => date('Y-m-d', $randomTimestamp),
-            'doj' => date('Y-m-d', $randomTimestamp),
+            'year_of_joining' => date('Y', $randomTimestamp),
             'email_verified_at' => now(),
             'password' => Hash::make('password'), // password
             'role' => 2,

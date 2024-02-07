@@ -23,10 +23,22 @@ class User extends Authenticatable
         'username',
         'phone',
         'dob',
-        'doj',
+        'year_of_joining',
         'password',
         'role',
-        'blocked'
+        'blocked',
+        'profile_image',
+        'address',
+        'pincode',
+        'ca_no',
+        'blood_group',
+        'gender',
+        'marital_status',
+        'marriage_ann',
+        'linkedin_url',
+        'facebook_url',
+        'twitter_url',
+        'degree'
     ];
 
     /**

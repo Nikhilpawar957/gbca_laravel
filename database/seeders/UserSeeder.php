@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('admin@123#'),
             'phone' => '1234567890',
             'dob' => date('Y-m-d',strtotime('-'.rand(18,30).' years -'.rand(1,12).' months -'.rand(1,28).' days' )),
-            'doj' => date('Y-m-d'),
+            'year_of_joining' => date('Y'),
             'role' => 1,
             'blocked' => 0,
             'remember_token' => Str::random(10),

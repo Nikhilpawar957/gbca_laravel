@@ -23,7 +23,7 @@ class AuthorController extends Controller
         return view('admin.pages.home');
     }
 
-    // Register Alumni's
+    // Register Alumni's From Admin
     public function register(Request $request)
     {
         $response = array();
@@ -73,7 +73,6 @@ class AuthorController extends Controller
     // Login Admin
     public function login(Request $request)
     {
-
         $response = array();
 
         $fieldType = filter_var($request->login_id, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
@@ -99,7 +98,7 @@ class AuthorController extends Controller
             ]);
         }
 
-        $creds = array($fieldType => $request->login_id, 'password' => $request->password);
+        $creds = array($fieldType => $request->login_id, 'password' => $request->password, 'role' => 1);
 
         if (Auth::guard('web')->attempt($creds)) {
             $checkUser = User::where($fieldType, $request->login_id)->first();
@@ -474,7 +473,7 @@ class AuthorController extends Controller
         }
     }
 
-    /* Category API Start */
+    /* Category API Start -------------------------------- */
 
     // Save Category API
     public function save_category(Request $request)
@@ -706,7 +705,7 @@ class AuthorController extends Controller
 
     /* Category API End  -------------------------------- */
 
-    /* Subcategory API Start */
+    /* Subcategory API Start -------------------------------- */
 
     // Save Subcategory API
     public function save_subcategory(Request $request)
