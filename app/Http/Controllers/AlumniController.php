@@ -255,6 +255,9 @@ class AlumniController extends Controller
 
         $alumni = User::find(auth()->user()->id);
 
+        if ($alumni->profile_image !== null && !filter_var($alumni->profile_image, FILTER_VALIDATE_URL)) {
+            $alumni->profile_image = asset('storage/'.$alumni->profile_image);
+        }
         $data = array(
             'pageTitle' => 'Edit Profile',
             'alumni' => $alumni
@@ -268,7 +271,7 @@ class AlumniController extends Controller
         $data = array();
 
         $years = DB::table('users')
-            ->selectRaw('DISTINCT year_of_joining')
+            ->selectRaw('DISTINCT year_of_joining AS year_of_joining')
             ->where('role', '=', 2)
             ->where('blocked', '=', 0)
             ->where('year_of_joining', '!=', '')
@@ -290,8 +293,7 @@ class AlumniController extends Controller
 
         $alumnis = DB::table('users')
             ->where('role', '=', 2)
-            ->where('blocked', '=', 0)
-            ->where('id', '!=', auth()->user()->id);
+            ->where('blocked', '=', 0);
 
         if ($request->filled('year')) {
             $alumnis->whereYear('year_of_joining', $request->year);
@@ -304,13 +306,28 @@ class AlumniController extends Controller
             $alumnis->whereRaw("name LIKE ? OR designation LIKE ? ", [$search, $search]);
         }
 
-        $alumnis->orderBy('name')->get();
+        $alumnis = $alumnis->orderBy('name')->get();
+
+        //dd($alumnis);
 
         if ($alumnis) {
 
             foreach ($alumnis as $key => $value) {
                 if ($value->profile_image != null && !filter_var($value->profile_image, FILTER_VALIDATE_URL)) {
                     $alumnis[$key]->profile_image = asset('storage/' . $value->profile_image);
+                }
+                if ($value->gender != null) {
+                    switch ($value->gender) {
+                        case 1:
+                            $alumnis[$key]->gender = 'Male';
+                            break;
+                        case 2:
+                            $alumnis[$key]->gender = 'Female';
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
                 }
             }
 
@@ -326,5 +343,17 @@ class AlumniController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    public function save_alumni(Request $request){
+        $response = array();
+
+        return response()->json($response);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+        return redirect()->route('index');
     }
 }

@@ -47,47 +47,16 @@
                         <p>Year:</p>
                         <div class="select">
                             <select id="year" name="year" class="form-select">
-                                <option value="hide">Select Year</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
+                                <option value="">Select Year</option>
+                                @foreach ($years as $year)
+                                    <option value="{{ $year->year_of_joining }}">{{ $year->year_of_joining }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5" id="alumni_content">
-                <div class="col">
-                    <div class="item team-images alumni-images">
-                        <a target="_blank" href="view-profile.php?user_id=4"><img
-                                src="profile_images/profile_image/1E5D8435-8EB5-44AC-ACD5-BA1C213F6A2C.jpg"
-                                alt="gbca team member"></a>
-                        <div class="team-overlay">
-                            <div class="team-desc">
-                                <h5>Aakruti Furia</h5>
-                                <p class="desg">NA</p>
-                                <div class="alumni-socials">
-                                    <a target="_blank" href="https://www.linkedin.com/in/aakruti-furia/"><i
-                                            class="fa fa-linkedin" aria-hidden="true"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="item team-images alumni-images">
-                        <a target="_blank" href="view-profile.php?user_id=5"><img
-                                src="profile_images/profile_image/ABBEC660-37BF-4BCB-B9AA-9DAEDE950A82.jpg"
-                                alt="gbca team member"></a>
-                        <div class="team-overlay">
-                            <div class="team-desc">
-                                <h5>Aalap Apurva Savla</h5>
-                                <p class="desg">Article Assistant</p>
-                                <div class="alumni-socials">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -149,29 +118,26 @@
                         html += '<div class="col">' +
                             '<div class="item team-images alumni-images">' +
                             '<a target="_blank" href="view-profile.php?user_id=5">' +
-                            '<img src="' + element.profile_image + '" alt="gbca team member"></a>' +
+                            '<img src="' + element.profile_image + '" alt="gbca team member">' +
+                            '</a>' +
                             '<div class="team-overlay">' +
                             '<div class="team-desc">' +
                             '<h5>' + element.name + '</h5>' +
                             '<p class="desg">' + element.designation + '</p>' +
                             '<div class="alumni-socials">';
-                        if (element.linkedin_url != "") {
+                        if (element.linkedin_url != null) {
                             html += '<a target="_blank" href="' + element.linkedin_url +
                                 '"><i class="fa fa-linkedin" aria-hidden="true"></i></a>';
                         }
-                        if (element.facebook_url != "") {
+                        if (element.facebook_url != null) {
                             html += '<a target="_blank" href="' + element.facebook_url +
                                 '"><i class="fa fa-facebook" aria-hidden="true"></i></a>';
                         }
-                        if (element.twitter_url != "") {
+                        if (element.twitter_url != null) {
                             html += '<a target="_blank" href="' + element.twitter_url +
                                 '"><i class="fa fa-twitter" aria-hidden="true"></i></a>';
                         }
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>';
+                        html += '</div></div></div></div></div>';
                     });
 
                     $("#alumni_content").html('');

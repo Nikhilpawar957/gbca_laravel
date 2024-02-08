@@ -46,7 +46,7 @@ Route::get('/resource/{any}', [HomeController::class, 'read_resource'])->name('r
 Route::view('/industries', 'frontend.pages.industries')->name('industries');
 Route::view('/careers', 'frontend.pages.careers')->name('careers');
 Route::view('/contact-us', 'frontend.pages.contact-us')->name('contact-us');
-Route::view('/alumni-login', 'frontend.pages.alumni-login')->name('alumni-login');
+Route::view('/alumni-login', 'frontend.pages.alumni-login')->name('login');
 
 // Contact Form Submit
 Route::post('/contact-form-submit', [HomeController::class, 'contact_form_submit'])->name('contact-form-submit');
@@ -62,4 +62,6 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('edit-profile', [AlumniController::class, 'edit_profile'])->name('edit-profile');
     Route::get('alumni-directory', [AlumniController::class, 'alumni_directory'])->name('alumni-directory');
     Route::post('get-alumnis', [AlumniController::class, 'get_alumnis'])->name('get-alumnis');
+    Route::post('logout', [AlumniController::class, 'logout'])->name('logout');
+    Route::post('save-alumni', [AlumniController::class, 'save_alumni'])->name('save-alumni');
 });

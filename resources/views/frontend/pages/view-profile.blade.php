@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-lg-4 col-md-4">
                                 <div class="view-profile-info">
-                                    <h5>Date of Birth : {{ date('Y-m-d', $alumni->dob) }}</h5>
+                                    <h5>Date of Birth : {{ date('d-M-Y', strtotime($alumni->dob)) }}</h5>
                                 </div>
                             </div>
                             <div class="col-lg-5 col-md-5">

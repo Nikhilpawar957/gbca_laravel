@@ -28,6 +28,7 @@ class User extends Authenticatable
         'role',
         'blocked',
         'profile_image',
+        'designation',
         'address',
         'pincode',
         'ca_no',

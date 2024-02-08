@@ -73,9 +73,24 @@
                                 href="{{ route('careers') }}">Careers</a></li>
                         <li class="{{ request()->is('contact-us') ? 'active-class active' : '' }}"><a
                                 href="{{ route('contact-us') }}">Contact Us</a></li>
-                        <li class="pad-diff has-sub"> </li>
-                        <li> <a href="{{ route('alumni-login') }}" class="almn-login">Alumni Login <img
-                                    src="{{ asset('assets/img/plus-menu-orange.svg') }}" class=" menu-plus"></a> </li>
+                        <li class="pad-diff has-sub">
+                            @if (Auth::check())
+                                <a href="javascript:void();" class="almn-login">{{ ucwords(auth()->user()->name) }}</a>
+                                <ul class="sub-menu alumni-menu">
+                                    <li><a href="{{ route('view-profile') }}">Profile</a></li>
+                                    <li><a href="{{ route('alumni-directory') }}">View Alumni</a></li>
+                                    <li><a href="javascript:void(0);"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                            class="last-item">Logout</a></li>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="post">
+                                        @csrf
+                                    </form>
+                                </ul>
+                            @else
+                                <a href="{{ route('login') }}" class="almn-login">Alumni Login <img
+                                        src="{{ asset('assets/img/plus-menu-orange.svg') }}" class=" menu-plus"></a>
+                            @endif
+                        </li>
                         <li class="global-btn">
                             <a href="https://www.gbcauae.com/" target="_blank" class="external-btn"><img
                                     src="{{ asset('assets/img/globe.png') }}" class="globe-icon">UAE Connect</a>

@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -35,6 +36,13 @@ class UserFactory extends Factory
             'role' => 2,
             'blocked' => rand(0, 2),
             'remember_token' => Str::random(10),
+            'profile_image' => fake()->imageUrl(300,300),
+            'address' => fake()->address,
+            'pincode' => rand(100000,800000),
+            'city' => fake()->city,
+            'state' => DB::table('states')->get()->random()->id,
+            'ca_no' => Str::random(12),
+            'gender' => rand(1,2),
             'created_at' => date('Y-m-d H:i:s', $randomTimestamp),
         ];
     }

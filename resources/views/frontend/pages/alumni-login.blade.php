@@ -1,3 +1,8 @@
+@if (Auth::check())
+    <script>
+        location.href = "{{ route('view-profile') }}";
+    </script>
+@endif
 @extends('frontend.layout.pages-layout')
 @section('pageTitle', isset($pageTitle) ? $pageTitle : 'Alumni Login | GBCA & Associates LLP Chartered Accountants')
 @push('stylesheets')
@@ -302,7 +307,7 @@
                                             </div>
                                             <div class="comment-submit-btn tabs-btn">
                                                 <button type="submit" id="form-submit" class="button orange-btn">Sign Up
-                                                    <img src="assets/img/arrow-right-white.svg"
+                                                    <img src="{{ asset('assets/img/arrow-right-white.svg') }}"
                                                         class="img-fluid btn-arrow"></button>
                                             </div>
                                         </div>
@@ -398,9 +403,9 @@
                         $(".signInForm").find(".danger_register").slideDown("slow").delay(5000).slideUp();
                     }
                     $(".signInForm").find('button').prop('disabled', false);
-                    setTimeout(() => {
-                        expireOTP();
-                    }, 30000);
+                    // setTimeout(() => {
+                    //     expireOTP();
+                    // }, 30000);
                 },
                 error: function(response) {
                     $.each(response.responseJSON.errors, function(prefix, val) {
@@ -458,7 +463,9 @@
                         $(".signInForm").find(".success_register").text(response.msg);
                         $(".signInForm").find(".success_register").slideDown("slow").delay(5000).slideUp();
 
-                        location.href="";
+                        setTimeout(() => {
+                            location.href = "{{ route('view-profile') }}";
+                        }, 5000);
                     } else {
                         $(".signInForm").find(".danger_register").text(response.msg);
                         $(".signInForm").find(".danger_register").slideDown("slow").delay(5000).slideUp();
