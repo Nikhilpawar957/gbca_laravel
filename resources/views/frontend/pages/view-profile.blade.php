@@ -1,7 +1,6 @@
 @extends('frontend.layout.pages-layout')
 @section('pageTitle', isset($pageTitle) ? $pageTitle : 'GBCA & Associates LLP Chartered Accountants')
 @push('stylesheets')
-    <link rel="stylesheet" href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
     <style type="text/css">
         footer {
             margin-top: 0;
@@ -33,16 +32,15 @@
                     <div class="avatar-upload">
                         <div class="avatar-preview">
                             <div id="imagePreview"
-                                style="background-image: url('{{ asset('storage/' . $alumni->profile_image) }}');">
+                                style="background-image: url('{{ !empty($alumni->profile_image) ? $alumni->profile_image : asset('storage/default-img.png') }}');">
                             </div>
                         </div>
                     </div>
                     <div class="static-profile-details">
                         <h4 class="name"><i class="fa fa-user" aria-hidden="true"></i> {{ $alumni->name }}</h4>
-                        <h4><i class="fa fa-phone" aria-hidden="true"></i> {{ $alumni->phone }}</h4>
-                        <h4><i class="fa fa-envelope" aria-hidden="true"></i> {{ $alumni->email }}</h4>
-                        <h4 class="last-info"><i class="fa fa-tint" aria-hidden="true"></i>Blood Group:
-                            {{ $alumni->blood_group }}</h4>
+                        <h4><i class="fa fa-phone" aria-hidden="true"></i> Concat: {{ $alumni->phone }}</h4>
+                        <h4><i class="fa fa-envelope" aria-hidden="true"></i> Email: {{ $alumni->email }}</h4>
+                        <h4 class="last-info"><i class="fa fa-tint" aria-hidden="true"></i> Blood Group: {{ $alumni->blood_group }}</h4>
                         <a href="{{ route('edit-profile') }}" class="orange-btn">Edit Profile <img
                                 src="{{ asset('assets/img/arrow-right-white.svg') }}" class="img-fluid btn-arrow"></a>
                     </div>

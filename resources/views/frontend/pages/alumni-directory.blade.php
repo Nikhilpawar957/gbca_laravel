@@ -1,7 +1,6 @@
 @extends('frontend.layout.pages-layout')
 @section('pageTitle', isset($pageTitle) ? $pageTitle : 'GBCA & Associates LLP Chartered Accountants')
 @push('stylesheets')
-    <link rel="stylesheet" href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
     <style type="text/css">
         footer {
             margin-top: 0;
@@ -63,10 +62,6 @@
 
 @endsection
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
-    <script src="{{ asset('assets/js/modal.js') }}"></script>
     <script>
         $.ajaxSetup({
             headers: {
@@ -111,14 +106,16 @@
                 dataType: "json",
                 processData: false,
                 contentType: false,
-                beforeSend: function() {},
+                beforeSend: function() {
+                    $("#alumni_content").html('Please Wait...');
+                },
                 success: function(response) {
                     var html = '';
                     response.data.forEach(element => {
                         html += '<div class="col">' +
                             '<div class="item team-images alumni-images">' +
-                            '<a target="_blank" href="view-profile.php?user_id=5">' +
-                            '<img src="' + element.profile_image + '" alt="gbca team member">' +
+                            '<a target="_blank" href="' + element.profile_url + '">' +
+                            '<img src="' + element.profile_image + '" alt="' + element.name + '">' +
                             '</a>' +
                             '<div class="team-overlay">' +
                             '<div class="team-desc">' +

@@ -64,4 +64,5 @@ Route::middleware(['auth:web'])->group(function () {
     Route::post('get-alumnis', [AlumniController::class, 'get_alumnis'])->name('get-alumnis');
     Route::post('logout', [AlumniController::class, 'logout'])->name('logout');
     Route::post('save-alumni', [AlumniController::class, 'save_alumni'])->name('save-alumni');
+    Route::get('view-alumni/{any}', [AlumniController::class, 'view_alumni'])->name('view-alumni');
 });

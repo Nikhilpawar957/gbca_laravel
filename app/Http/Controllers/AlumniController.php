@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Torann\Hashids\Facade\Hashids;
 
 class AlumniController extends Controller
 {
@@ -239,7 +240,7 @@ class AlumniController extends Controller
     {
         $data = array();
 
-        $alumni = User::find(auth()->user()->id);
+        $alumni = User::selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/',users.profile_image) ELSE profile_image END AS profile_image, CASE WHEN gender = 1 THEN 'Male' ELSE 'Female' END AS gender")->find(auth()->user()->id);
 
         $data = array(
             'pageTitle' => 'View Profile',
@@ -249,15 +250,32 @@ class AlumniController extends Controller
         return view('frontend.pages.view-profile', $data);
     }
 
+    public function view_alumni(Request $request, $alumni_id)
+    {
+        $data = array();
+
+        $decoded_id = Hashids::decode($alumni_id);
+
+        if ($alumni_id == "" || empty($decoded_id)) {
+            abort(403, 'Alumni Not Found');
+        }
+
+        $alumni = User::selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/',users.profile_image) ELSE profile_image END AS profile_image, CASE WHEN gender = 1 THEN 'Male' ELSE 'Female' END AS gender")->find($decoded_id[0]);
+
+        $data = array(
+            'pageTitle' => 'View Alumni Profile',
+            'alumni' => $alumni
+        );
+
+        return view('frontend.pages.alumni-profile', $data);
+    }
+
     public function edit_profile(Request $request)
     {
         $data = array();
 
         $alumni = User::find(auth()->user()->id);
 
-        if ($alumni->profile_image !== null && !filter_var($alumni->profile_image, FILTER_VALIDATE_URL)) {
-            $alumni->profile_image = asset('storage/'.$alumni->profile_image);
-        }
         $data = array(
             'pageTitle' => 'Edit Profile',
             'alumni' => $alumni
@@ -291,15 +309,16 @@ class AlumniController extends Controller
     {
         $response = array();
 
-        $alumnis = DB::table('users')
-            ->where('role', '=', 2)
-            ->where('blocked', '=', 0);
+        $alumnis = DB::table("users")
+            ->selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/',users.profile_image) ELSE profile_image END AS profile_image")
+            ->where("role", "=", 2)
+            ->where("blocked", "=", 0);
 
-        if ($request->filled('year')) {
-            $alumnis->whereYear('year_of_joining', $request->year);
+        if ($request->filled("year")) {
+            $alumnis->whereYear("year_of_joining", $request->year);
         }
 
-        if ($request->filled('search')) {
+        if ($request->filled("search")) {
 
             $search = "%" . $request->search . "%";
 
@@ -308,28 +327,12 @@ class AlumniController extends Controller
 
         $alumnis = $alumnis->orderBy('name')->get();
 
-        //dd($alumnis);
+        foreach ($alumnis as $key => $value) {
+            $encoded_id = Hashids::encode($value->id);
+            $alumnis[$key]->profile_url = route('view-alumni', [$encoded_id]);
+        }
 
         if ($alumnis) {
-
-            foreach ($alumnis as $key => $value) {
-                if ($value->profile_image != null && !filter_var($value->profile_image, FILTER_VALIDATE_URL)) {
-                    $alumnis[$key]->profile_image = asset('storage/' . $value->profile_image);
-                }
-                if ($value->gender != null) {
-                    switch ($value->gender) {
-                        case 1:
-                            $alumnis[$key]->gender = 'Male';
-                            break;
-                        case 2:
-                            $alumnis[$key]->gender = 'Female';
-                            break;
-                        default:
-                            # code...
-                            break;
-                    }
-                }
-            }
 
             $response = [
                 'code' => 1,
@@ -345,8 +348,92 @@ class AlumniController extends Controller
         return response()->json($response);
     }
 
-    public function save_alumni(Request $request){
+    public function save_alumni(Request $request)
+    {
+        $image_path = 'alumni/images/';
+
         $response = array();
+
+        if ($request->hasFile('profile_image')) {
+            $request->validate([
+                'profile_image' => ['required', 'image', 'mimes:png,jpg'],
+                'name' => ['required', 'string', 'max:255'],
+                'blood_group' => ['required', 'string'],
+                'gender' => ['required', 'integer'],
+                'dob' => ['required', 'date'],
+                'marriage_ann' => ['nullable', 'date'],
+                'linkedin_url' => ['nullable', 'url'],
+                'facebook_url' => ['nullable', 'url'],
+                'twitter_url' => ['nullable', 'url'],
+                'email' => ['required', 'email', 'unique:users,email,' . auth()->user()->id],
+                'phone' => ['required', 'numeric', 'unique:users,phone,' . auth()->user()->id],
+                'pincode' => ['nullable', 'numeric', 'max_digits:6'],
+                'city' => ['nullable', 'string'],
+                'state' => ['nullable', 'integer'],
+                'name_org' => ['required', 'string'],
+                'designation' => ['required', 'string'],
+                'year_of_joining' => ['required', 'numeric', 'max_digits:4'],
+            ]);
+        } else {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'blood_group' => ['required', 'string'],
+                'gender' => ['required', 'integer'],
+                'dob' => ['required', 'date'],
+                'marriage_ann' => ['nullable', 'date'],
+                'linkedin_url' => ['nullable', 'url'],
+                'facebook_url' => ['nullable', 'url'],
+                'twitter_url' => ['nullable', 'url'],
+                'email' => ['required', 'email', 'unique:users,email,' . auth()->user()->id],
+                'phone' => ['required', 'numeric', 'unique:users,phone,' . auth()->user()->id],
+                'pincode' => ['nullable', 'numeric', 'max_digits:6'],
+                'city' => ['nullable', 'string'],
+                'state' => ['nullable', 'integer'],
+                'name_org' => ['required', 'string'],
+                'designation' => ['required', 'string'],
+                'year_of_joining' => ['required', 'numeric', 'max_digits:4'],
+            ]);
+        }
+
+        $update_data = array();
+
+        foreach ($request->all() as $key => $value) {
+            $update_data[$key] = $value;
+        }
+
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+
+            $imagename = $image->getClientOriginalName();
+
+            $new_imagename = time() . '_' . $imagename;
+
+            $image_upload = Storage::disk('public')->put($image_path . $new_imagename, (string) file_get_contents($image));
+
+            $old_image = User::find($request->alumni_id)->profile_image;
+
+            if ($old_image != null && Storage::disk('public')->exists($old_image)) {
+                Storage::disk('public')->delete($old_image);
+            }
+
+            if ($image_upload) {
+                $update_data['profile_image'] = $image_path . $new_imagename;
+            }
+        }
+
+        $update_alumni = User::where('id', '=', auth()->user()->id)->update($update_data);
+
+        if ($update_alumni) {
+            $response = [
+                'code' => 1,
+                'msg' => 'Profile updated successfully'
+            ];
+        } else {
+            $response = [
+                'code' => 3,
+                'msg' => 'Something went wrong, while updating'
+            ];
+        }
 
         return response()->json($response);
     }

@@ -43,7 +43,7 @@
                                 </label>
                             </div>
                             <div class="avatar-preview">
-                                <div id="imagePreview" style="background-image: url('{{ $alumni->profile_image }}');">
+                                <div id="imagePreview" style="background-image: url('{{ !empty($alumni->profile_image) ? $alumni->profile_image : asset('/storage/default-img.png') }}');">
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,6 @@
                     <div class="col-lg-9 col-md-9">
                         <div class="form-white-box">
                             <h4 class="profile-form-head">Personal Details</h4>
-                            <input type="hidden" name="user_id" id="user_id" value="{{ $alumni->id }}">
                             <div class="contact-form__two">
                                 <div class="row fields-bs">
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
@@ -69,7 +68,7 @@
                                         <label for="ca_no">CA Membership No.</label>
                                     </div>
                                     <div class="form-group text-left col-lg-4 col-md-4 mb-0">
-                                        <label for="" class="sticky-label">Blood Group</label>
+                                        <label for="" class="sticky-label">Blood Group <span class="red">*</span></label>
                                         <select class="form-select" id="blood_group" name="blood_group">
                                             <option value="">Select Blood Group</option>
                                             @php
