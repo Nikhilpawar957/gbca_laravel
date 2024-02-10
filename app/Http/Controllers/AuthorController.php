@@ -440,20 +440,7 @@ class AuthorController extends Controller
                     }
 
                     // Edit & Delete button
-                    $actionBtn .= '<a href="' . route("author.edit-user", $userId) . '" class="edit text-warning" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-edit-circle" width="24"
-                                height="24" viewBox="0 0 24 24" stroke-width="2"
-                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M12 15l8.385 -8.415a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3z" />
-                                <path d="M16 5l3 3" />
-                                <path d="M9 7.07a7 7 0 0 0 1 13.93a7 7 0 0 0 6.929 -6" />
-                            </svg>
-                        </a>
-                        <a href="javascript:void(0);" class="delete text-danger" data-bs-toggle="tooltip" data-bs-placement="left" title="Delete" onclick="return delete_user(\'' . $encode_id . '\');">
+                    $actionBtn .= '<a href="javascript:void(0);" class="delete text-danger" data-bs-toggle="tooltip" data-bs-placement="left" title="Delete" onclick="return delete_user(\'' . $encode_id . '\');">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-circle-x-filled"
                                 width="24" height="24" viewBox="0 0 24 24"
@@ -1230,98 +1217,6 @@ class AuthorController extends Controller
     /* Resources API End -------------------------------- */
 
     /* Users API Start -------------------------------- */
-
-    // Save User Profile
-    public function save_user(Request $request)
-    {
-        $response = array();
-
-        if ($request->filled('user_id')) {
-            $decoded_id = Hashids::decode($request->user_id);
-
-            if (empty($decoded_id)) {
-                return response()->json(['code' => '3', 'message' => 'Invalid User']);
-            }
-
-            $request->merge([
-                'user_id' => $decoded_id[0],
-            ]);
-
-            $request->validate([
-                'user_id' => ['required' . 'integer', 'exists:users,id'],
-                'name' => ['required', 'string'],
-                'email' => ['required', 'email', 'unique:users,email,' . $request->user_id],
-                'phone' => ['required', 'number', 'unique:users,phone,' . $request->user_id],
-            ]);
-
-            $update_data = array(
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-            );
-
-            $save_user = User::where('id', '=', $request->user_id)->update($update_data);
-
-            if ($save_user) {
-                $response = array(
-                    'code' => 1,
-                    'msg' => 'User Updated',
-                );
-            } else {
-                $response = array(
-                    'code' => 3,
-                    'msg' => 'Something went wrong while updating user',
-                );
-            }
-        } else {
-            $request->validate([
-                'name' => ['required', 'string'],
-                'email' => ['required', 'email', 'unique:users,email,' . $request->user_id],
-                'phone' => ['required', 'number', 'unique:users,phone,' . $request->user_id],
-            ]);
-
-            $insert_data = array(
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-            );
-
-            $save_user = User::create($insert_data);
-
-            if ($save_user) {
-                $response = array(
-                    'code' => 1,
-                    'msg' => 'User Inserted',
-                );
-            } else {
-                $response = array(
-                    'code' => 3,
-                    'msg' => 'Something went wrong while inserting user',
-                );
-            }
-        }
-
-        return response()->json($response);
-    }
-
-    // Edit User Profile
-    public function edit_user(Request $request, $user_id)
-    {
-        $decoded_id = Hashids::decode($user_id);
-
-        if ($user_id == "" || empty($decoded_id)) {
-            abort(404);
-        }
-
-        $user = User::find($decoded_id[0]);
-
-        $data = [
-            'user' => $user,
-            'pageTitle' => 'Edit User Profile | ' . env('APP_NAME')
-        ];
-
-        return view('admin.pages.edit-user', $data);
-    }
 
     // Delete User Profile
     public function delete_user(Request $request)

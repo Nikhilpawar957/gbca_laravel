@@ -38,8 +38,6 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
             Route::get('/getContactFormData', [AuthorController::class, 'getContactFormData'])->name('getContactFormData');
             Route::view('/users', 'admin.pages.users')->name('users');
             Route::get('/getUsers', [AuthorController::class, 'getUsers'])->name('getUsers');
-            Route::post('/save-user', [AuthorController::class, 'save_user'])->name('save-user');
-            Route::get('/edit-user/{user_id}', [AuthorController::class, 'edit_user'])->name('edit-user');
             Route::post('/delete-user', [AuthorController::class, 'delete_user'])->name('delete-user');
             Route::post('/change-user-status', [AuthorController::class, 'change_user_status'])->name('change-user-status');
         });
