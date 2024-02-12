@@ -16,6 +16,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use Torann\Hashids\Facade\Hashids;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Setting;
+use Illuminate\Support\Facades\File;
 
 class AuthorController extends Controller
 {
@@ -118,7 +120,7 @@ class AuthorController extends Controller
                 'link' => $link,
             );
 
-            Mail::send('email_templates.forgot-email-template', $data, function ($message) use ($user) {
+            Mail::send('email_templates.reset_password_for_admin', $data, function ($message) use ($user) {
                 $from = "nikhil.pawar@onerooftech.com";
                 $to = $user->email;
                 $subject = "Reset Password";
@@ -196,6 +198,61 @@ class AuthorController extends Controller
 
         return response()->json($response);
     }
+
+    // Change Logo
+    public function changeLogo(Request $request)
+    {
+        $settings = Setting::find(1);
+        $logo_path = 'admin/dist/img/logo-favicon/';
+        $old_logo = $settings->getAttributes()['logo'];
+        $file = $request->file('logo');
+        $filename = time() . '_' . rand(1, 100000) . '-gbca-llp-logo.png';
+
+        if ($request->hasFile('logo')) {
+            if ($old_logo != null && File::exists(public_path($logo_path . $old_logo))) {
+                File::delete(public_path($logo_path . $old_logo));
+            }
+
+            $upload = $file->move(public_path($logo_path), $filename);
+
+            if ($upload) {
+                $settings->update([
+                    'logo' => $filename,
+                ]);
+                return response()->json(['status' => 1, 'msg' => 'Logo Updated Successfully']);
+            } else {
+                return response()->json(['status' => 0, 'msg' => 'Something Went Wrong']);
+            }
+        }
+    }
+
+    // Change Favicon
+    public function changeFavicon(Request $request)
+    {
+        $settings = Setting::find(1);
+        $favicon_path = 'admin/dist/img/logo-favicon/';
+        $old_favicon = $settings->getAttributes()['favicon'];
+        $file = $request->file('favicon');
+        $filename = time() . '_' . rand(1, 100000) . '-gbca-llp-favicon.png';
+
+        if ($request->hasFile('favicon')) {
+            if ($old_favicon != null && File::exists(public_path($favicon_path . $old_favicon))) {
+                File::delete(public_path($favicon_path . $old_favicon));
+            }
+
+            $upload = $file->move(public_path($favicon_path), $filename);
+
+            if ($upload) {
+                $settings->update([
+                    'favicon' => $filename,
+                ]);
+                return response()->json(['status' => 1, 'msg' => 'Favicon Updated Successfully']);
+            } else {
+                return response()->json(['status' => 0, 'msg' => 'Something Went Wrong']);
+            }
+        }
+    }
+
 
     // Get Categories (Datatables)
     public function getCategories(Request $request)

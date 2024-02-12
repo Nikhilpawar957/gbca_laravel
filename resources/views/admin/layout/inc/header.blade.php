@@ -64,7 +64,7 @@
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <a href="#" class="dropdown-item">Settings</a>
+                    <a href="{{ route('author.settings') }}" class="dropdown-item">Settings</a>
                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#logout-modal"
                         class="dropdown-item">Logout</a>
                 </div>

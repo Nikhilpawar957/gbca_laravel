@@ -18,6 +18,9 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
             Route::get('/home', [AuthorController::class, 'index'])->name('home');
             Route::post('/logout', [AuthorController::class, 'logout'])->name('logout');
             Route::view('/profile', 'admin.pages.profile')->name('profile');
+            Route::view('/settings', 'admin.pages.settings')->name('settings');
+            Route::post('/change-logo', [AuthorController::class, "changeLogo"])->name("change-logo");
+            Route::post('/change-favicon', [AuthorController::class, "changeFavicon"])->name("change-favicon");
             Route::view('/categories', 'admin.pages.categories')->name('categories');
             Route::get('/getCategories', [AuthorController::class, 'getCategories'])->name('getCategories');
             Route::get('/getSubCategories', [AuthorController::class, 'getSubCategories'])->name('getSubCategories');

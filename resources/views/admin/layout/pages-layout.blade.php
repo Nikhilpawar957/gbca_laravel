@@ -20,10 +20,10 @@
     <title>@yield('pageTitle')</title>
 
     {{-- Shortcut Icon --}}
-    <link rel="shortcut icon" href="{{ asset('assets/img/gbc-logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('assets/img/gbc-logo.png') }}">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/img/gbc-logo.png') }}">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('assets/img/gbc-logo.png') }}">
+    <link rel="shortcut icon" href="{{ \App\Models\Setting::find(1)->favicon }}">
+    <link rel="apple-touch-icon" href="{{ \App\Models\Setting::find(1)->favicon }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ \App\Models\Setting::find(1)->favicon }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ \App\Models\Setting::find(1)->favicon }}">
 
     <!-- CSS files -->
     <link rel="stylesheet" href="{{ asset('admin/dist/css/tabler.min.css') }}" />

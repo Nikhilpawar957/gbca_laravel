@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12">
                 <nav class="main-nav">
-                    <a href="{{ route('index') }}" class="logo"> <img src="{{ asset('assets/img/gbc-llp-logo.png') }}"
+                    <a href="{{ route('index') }}" class="logo"> <img src="{{ \App\Models\Setting::find(1)->logo }}"
                             class="img-fluid logo-img">
                     </a>
                     <ul class="nav">

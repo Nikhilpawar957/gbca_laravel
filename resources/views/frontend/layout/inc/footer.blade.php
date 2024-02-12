@@ -22,7 +22,7 @@
             <div class="col-lg-2 col-md-2">
                 <div class="footer-contact-info">
                     <div class="footer-logo">
-                        <img src="{{ asset('assets/img/gbc-llp-logo.png') }}" class="img-fluid">
+                        <img src="{{ \App\Models\Setting::find(1)->logo }}" class="img-fluid">
                     </div>
                     <div class="contact-listing">
                         <ul>

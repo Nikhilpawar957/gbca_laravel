@@ -6,7 +6,7 @@
         </button>
         <h1 class="navbar-brand navbar-brand-autodark">
             <a href=".">
-                <img src="{{ asset('assets/img/gbc-llp-logo.png') }}" width="110" height="40" alt="Tabler"
+                <img src="{{ \App\Models\Setting::find(1)->logo }}" width="110" height="40" alt="Tabler"
                     class="navbar-brand-image">
             </a>
         </h1>
