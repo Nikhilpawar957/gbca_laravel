@@ -9,9 +9,11 @@
                     <img src="{{ asset('assets/img/gbc-llp-logo.png') }}" height="36" alt="" />
                 </a>
             </div>
-            <div class="alert alert-danger">Alert Danger</div>
-            <div class="alert alert-success">Alert Success</div>
-            <form class="card card-md" method="post" autocomplete="off" novalidate>
+            <div class="alert alert-danger d-none">Alert Danger</div>
+            <div class="alert alert-success d-none">Alert Success</div>
+            <form action="{{ route('author.reset-password-submit') }}" class="card card-md" id="resetForm" method="post"
+                autocomplete="off" novalidate>
+                @csrf
                 <div class="card-body">
                     <h2 class="h2 text-center mb-4">Reset Password</h2>
                     <div class="mb-3">
@@ -25,7 +27,7 @@
                             Password
                         </label>
                         <div class="input-group input-group-flat">
-                            <input type="password" class="form-control" id="password" placeholder="New Password"
+                            <input type="password" class="form-control" id="new_password" name="new_password" placeholder="New Password"
                                 autocomplete="off" />
                             <span class="input-group-text">
                                 <a href="javascript:void(0)" class="link-secondary" title="Show password"
@@ -48,7 +50,7 @@
                             Confirm Password
                         </label>
                         <div class="input-group input-group-flat">
-                            <input type="password" class="form-control" id="confirm_password" placeholder="Confirm Password"
+                            <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" placeholder="Confirm Password"
                                 autocomplete="off" />
                             <span class="input-group-text">
                                 <a href="javascript:void(0)" class="link-secondary" title="Show password"
@@ -83,21 +85,70 @@
 @push('scripts')
     <script>
         function show_password() {
-            var password = document.getElementById('password');
-            if (password.type === 'password') {
-                password.type = 'text';
+            var new_password = document.getElementById('new_password');
+            if (new_password.type === 'password') {
+                new_password.type = 'text';
             } else {
-                password.type = 'password';
+                new_password.type = 'password';
             }
         }
 
         function show_confirm_password() {
-            var confirm_password = document.getElementById('confirm_password');
-            if (confirm_password.type === 'password') {
-                confirm_password.type = 'text';
+            var confirm_new_password = document.getElementById('confirm_new_password');
+            if (confirm_new_password.type === 'password') {
+                confirm_new_password.type = 'text';
             } else {
-                confirm_password.type = 'password';
+                confirm_new_password.type = 'password';
             }
         }
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        $('form#resetForm').submit(function(e) {
+            e.preventDefault();
+            var form = this;
+            var formdata = new FormData(form);
+            $.ajax({
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: formdata,
+                processData: false,
+                dataType: "json",
+                contentType: false,
+                beforeSend: function() {
+                    $(form).find('span.error-text').text('');
+                    $('div.alert').addClass('d-none');
+                    $('div.alert').text('');
+                },
+                success: function(response) {
+                    //console.log(response);
+                    if (response.code == 1) {
+                        $('div.alert-success').removeClass('d-none').text(response.msg)
+                            .slideDown(5000).slideUp(
+                                5000);
+
+
+                        setTimeout(() => {
+                            location.href = "{{ route('author.login') }}"
+                        }, 5000);
+                    } else {
+                        $('div.alert-danger').removeClass('d-none').text(response.msg)
+                            .slideDown(5000).slideUp(
+                                5000);
+                    }
+                },
+                error: function(response) {
+                    $.each(response.responseJSON.errors, function(prefix, val) {
+                        $(form).find('span.' + prefix + '_error').text(val[0]);
+                    });
+                }
+            });
+        });
     </script>
 @endpush

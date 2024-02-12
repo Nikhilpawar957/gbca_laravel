@@ -9,7 +9,11 @@
                     <img src="{{ asset('assets/img/gbc-llp-logo.png') }}" height="36" alt="" />
                 </a>
             </div>
-            <form class="card card-md" method="post" autocomplete="off" novalidate>
+            <div class="alert alert-danger d-none">Alert Danger</div>
+            <div class="alert alert-success d-none">Alert Success</div>
+            <form action="{{ route('author.forgot-password-submit') }}" class="card card-md" id="forgotForm" method="post"
+                autocomplete="off" novalidate>
+                @csrf
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Forgot password</h2>
                     <p class="text-muted mb-4">
@@ -42,3 +46,51 @@
     </div>
 
 @endsection
+@push('scripts')
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        $('form#forgotForm').submit(function(e) {
+            e.preventDefault();
+            var form = this;
+            var formdata = new FormData(form);
+            $.ajax({
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: formdata,
+                processData: false,
+                dataType: "json",
+                contentType: false,
+                beforeSend: function() {
+                    $(form).find('span.error-text').text('');
+                    $('div.alert').addClass('d-none');
+                    $('div.alert').text('');
+                },
+                success: function(response) {
+                    //console.log(response);
+                    if (response.code == 1) {
+                        $('div.alert-success').removeClass('d-none').text(response.msg)
+                            .slideDown(5000).slideUp(
+                                5000);
+
+                    } else {
+                        $('div.alert-danger').removeClass('d-none').text(response.msg)
+                            .slideDown(5000).slideUp(
+                                5000);
+                    }
+                },
+                error: function(response) {
+                    $.each(response.responseJSON.errors, function(prefix, val) {
+                        $(form).find('span.' + prefix + '_error').text(val[0]);
+                    });
+                }
+            });
+        });
+    </script>
+@endpush

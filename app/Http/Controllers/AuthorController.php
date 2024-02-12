@@ -7,7 +7,7 @@ use App\Models\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
@@ -15,59 +15,13 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use Torann\Hashids\Facade\Hashids;
+use Illuminate\Support\Facades\Mail;
 
 class AuthorController extends Controller
 {
     public function index(Request $request)
     {
         return view('admin.pages.home');
-    }
-
-    // Register Alumni's From Admin
-    public function register(Request $request)
-    {
-        $response = array();
-
-        $request->validate([
-            'name' => 'required|min:3',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|digits:10'
-        ], [
-            'name.required' => 'Full Name is required',
-            'name.min' => 'Full Name Cannot be less than 3 characters',
-            'email.required' => 'Email is required',
-            'email.email' => 'Invalid Email Address',
-            'email.unique' => 'Email is already registered',
-            'phone.required' => 'Phone Number is required',
-            'phone.digits' => 'Phone Number must be 10 digits',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => isset($request->password) ? Hash::make($request->password) : Hash::make($request->phone),
-            'doj' => isset($request->doj) ? $request->doj : Carbon::now()
-        ]);
-
-        if ($user) {
-
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            $response = array(
-                'code' => 1,
-                'token' => $token,
-                'user' => $request->name,
-                'msg' => 'User registration successful'
-            );
-        } else {
-            $response = array(
-                'code' => 3,
-                'msg' => 'User registration failed'
-            );
-        }
-
-        return response()->json($response);
     }
 
     // Login Admin
@@ -138,6 +92,55 @@ class AuthorController extends Controller
         return redirect()->route('author.login');
     }
 
+    // Admin Forgot Password form submit
+    public function ForgotPassword(Request $request)
+    {
+        $response = array();
+
+        $request->validate([
+            'email' => ['required', 'email', 'exists:users,email']
+        ]);
+
+        $token = base64_encode(Str::random(64));
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => $token,
+            'created_at' => Carbon::now(),
+        ]);
+
+        $user = User::where('email', $request->email)->where('blocked', '=', 0)->first();
+
+        if (!empty($user)) {
+            $link = route('author.reset-form', ['token' => $token, 'email' => $request->email]);
+
+            $data = array(
+                'name' => $user->name,
+                'link' => $link,
+            );
+
+            Mail::send('email_templates.forgot-email-template', $data, function ($message) use ($user) {
+                $from = "nikhil.pawar@onerooftech.com";
+                $to = $user->email;
+                $subject = "Reset Password";
+
+                $message->from($from, env('APP_NAME'));
+                $message->to($to, 'GBCAUAE')->subject($subject);
+            });
+
+            $response = [
+                'code' => 1,
+                'msg' => "We've emailed your reset password link"
+            ];
+        } else {
+            $response = [
+                'code' => 3,
+                'msg' => "Invalid User or User Blocked"
+            ];
+        }
+
+        return response()->json($response);
+    }
+
     // Reset Password Form
     public function ResetForm(Request $request, $token = null)
     {
@@ -146,6 +149,52 @@ class AuthorController extends Controller
         ];
 
         return view('admin.pages.auth.reset', $data)->with(['token' => $token, 'email' => $request->email]);
+    }
+
+    // Reset Form Submit
+    public function ResetFormSubmit(Request $request)
+    {
+        $response = array();
+
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'new_password' => 'required|min:5',
+            'confirm_new_password' => 'same:new_password',
+        ], [
+            'email.required' => 'Email is required',
+            'email.email' => 'Invalid Email Address',
+            'email.exists' => 'Email is not Registered',
+            'new_password.required' => 'Enter New Password',
+            'new_password.min' => 'Minimum Characters Must be 5',
+            'confirm_new_password.same' => 'Both Passwords Must Match Each Other',
+        ]);
+
+        $check_token = DB::table('password_resets')->where([
+            'email' => $request->email,
+            'token' => $request->token,
+        ])->where('blocked', '=', 0)->first();
+
+        if (!$check_token) {
+            $response = [
+                'code' => 3,
+                'msg' => "Invalid User or User Blocked"
+            ];
+        } else {
+            User::where('email', $request->email)->update([
+                'password' => Hash::make($request->new_password,)
+            ]);
+
+            DB::table('password_resets')->where([
+                'email' => $request->email,
+            ])->delete();
+
+            $response = [
+                'code' => 1,
+                'msg' => "Your Password is Updated, Please Login with your email and your new password"
+            ];
+        }
+
+        return response()->json($response);
     }
 
     // Get Categories (Datatables)

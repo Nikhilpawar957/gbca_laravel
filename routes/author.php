@@ -10,6 +10,8 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
             Route::view('/login', 'admin.pages.auth.login')->name('login');
             Route::view('/forgot-password', 'admin.pages.auth.forgot')->name('forgot-password');
             Route::get('/password/reset/{token}', [AuthorController::class, 'ResetForm'])->name('reset-form');
+            Route::post('forgot-password-submit', [AuthorController::class, 'ForgotPassword'])->name('forgot-password-submit');
+            Route::post('reset-password-submit', [AuthorController::class, 'ResetFormSubmit'])->name('reset-password-submit');
         });
 
         Route::middleware(['auth:sanctum', 'isAdmin'])->group(function () {
