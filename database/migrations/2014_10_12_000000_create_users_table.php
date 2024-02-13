@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('blood_group')->nullable();
             $table->integer('gender')->nullable();
             $table->string('marital_status',30)->nullable();
-            $table->date('marriagn_ann')->nullable();
+            $table->date('marriage_ann')->nullable();
             $table->string('linkedin_url')->nullable();
             $table->string('facebook_url')->nullable();
             $table->string('twitter_url')->nullable();
