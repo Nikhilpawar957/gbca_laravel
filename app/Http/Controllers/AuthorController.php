@@ -174,12 +174,12 @@ class AuthorController extends Controller
         $check_token = DB::table('password_resets')->where([
             'email' => $request->email,
             'token' => $request->token,
-        ])->where('blocked', '=', 0)->first();
+        ])->first();
 
         if (!$check_token) {
             $response = [
                 'code' => 3,
-                'msg' => "Invalid User or User Blocked"
+                'msg' => "Invalid User"
             ];
         } else {
             User::where('email', $request->email)->update([
@@ -456,6 +456,34 @@ class AuthorController extends Controller
                 $end_date = $dates[1];
 
                 $data = $data->whereDate('c.created_at', '>=', $start_date)->whereDate('c.created_at', '<=', $end_date);
+            }
+
+            $data = $data->get();
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+    }
+
+    // Get Profile Form Data (Datatables)
+    public function getProfileFormData(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = DB::table('profile_form AS p')
+                ->selectRaw("*,date_format(p.created_at, '%M %d,%Y') as date")
+                ->orderByDesc('id');
+
+            if ($request->filled('date_range')) {
+
+                $date_range = $request->date_range;
+
+                $dates = explode(' - ', $date_range);
+
+                $start_date = $dates[0];
+                $end_date = $dates[1];
+
+                $data = $data->whereDate('p.created_at', '>=', $start_date)->whereDate('p.created_at', '<=', $end_date);
             }
 
             $data = $data->get();

@@ -12,8 +12,9 @@
         </h1>
         <div class="navbar-nav flex-row d-lg-none">
             <div class="d-lg-flex">
-                <a href="{{ Request::fullUrlWithQuery(['theme' => 'dark']) }}" class="nav-link px-0 hide-theme-dark" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" aria-label="Enable dark mode" data-bs-original-title="Enable dark mode">
+                <a href="{{ Request::fullUrlWithQuery(['theme' => 'dark']) }}" class="nav-link px-0 hide-theme-dark"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Enable dark mode"
+                    data-bs-original-title="Enable dark mode">
                     <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon-filled"
                         width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -24,8 +25,8 @@
                             stroke-width="0" fill="currentColor" />
                     </svg>
                 </a>
-                <a href="{{ Request::fullUrlWithQuery(['theme' => 'light']) }}" class="nav-link px-0 hide-theme-light" data-bs-toggle="tooltip"
-                    data-bs-placement="bottom" aria-label="Enable light mode"
+                <a href="{{ Request::fullUrlWithQuery(['theme' => 'light']) }}" class="nav-link px-0 hide-theme-light"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Enable light mode"
                     data-bs-original-title="Enable light mode">
                     <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sun-filled"
@@ -69,7 +70,7 @@
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <a href="#" class="dropdown-item">Settings</a>
+                    <a href="{{ route('author.settings') }}" class="dropdown-item">Settings</a>
                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#logout-modal"
                         class="dropdown-item">Logout</a>
                 </div>
@@ -134,15 +135,26 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('author.users') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" /><path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M17 10h2a2 2 0 0 1 2 2v1" /><path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M3 13v-1a2 2 0 0 1 2 -2h2" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
+                                <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                <path d="M17 10h2a2 2 0 0 1 2 2v1" />
+                                <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
+                            </svg>
                         </span>
                         <span class="nav-link-title">
                             Alumni Users
                         </span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('author.contact-data') }}">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown"
+                        data-bs-auto-close="false" role="button" aria-expanded="true">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-forms"
                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -157,9 +169,17 @@
                             </svg>
                         </span>
                         <span class="nav-link-title">
-                            Contact Data
+                            Forms
                         </span>
                     </a>
+                    <div class="dropdown-menu" data-bs-popper="static">
+                        <a class="dropdown-item" href="{{ route('author.contact-data') }}">
+                            Contact Form
+                        </a>
+                        <a class="dropdown-item" href="{{ route('author.profile-data') }}">
+                            Profile Form
+                        </a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="javascript:void(0);" data-bs-toggle="modal"

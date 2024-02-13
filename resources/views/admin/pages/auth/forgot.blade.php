@@ -6,7 +6,7 @@
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
                 <a href="{{ route('author.login') }}" class="navbar-brand navbar-brand-autodark">
-                    <img src="{{ asset('assets/img/gbc-llp-logo.png') }}" height="36" alt="" />
+                    <img src="{{ \App\Models\Setting::find(1)->logo }}" height="36" alt="" />
                 </a>
             </div>
             <div class="alert alert-danger d-none">Alert Danger</div>

@@ -112,11 +112,13 @@ class AlumniController extends Controller
                 ];
             } else {
 
+                $otp = rand(100000, 999999);
+
                 $data = [
                     'name' => $checkUser->name,
                     'phone' => $checkUser->phone,
                     'email' => $checkUser->email,
-                    'otp' => rand(100000, 999999),
+                    'otp' => $otp,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ];
@@ -135,6 +137,10 @@ class AlumniController extends Controller
                         $message->from($from, env('APP_NAME'));
                         $message->to($to, $checkUser->name)->subject($subject);
                     });
+
+                    if ($checkUser->phone != null) {
+                        send_sms($checkUser->phone,'send_otp',$data);
+                    }
 
                     $response = [
                         'code' => 1,

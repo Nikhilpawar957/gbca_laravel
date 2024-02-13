@@ -41,6 +41,8 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
             Route::post('/getSubCategoriesByCategory', [AuthorController::class, 'getSubCategoriesByCategory'])->name('getSubCategoriesByCategory');
             Route::view('/contact-data', 'admin.pages.contact-data')->name('contact-data');
             Route::get('/getContactFormData', [AuthorController::class, 'getContactFormData'])->name('getContactFormData');
+            Route::view('/profile-data', 'admin.pages.profile-data')->name('profile-data');
+            Route::get('/getProfileFormData', [AuthorController::class, 'getProfileFormData'])->name('getProfileFormData');
             Route::view('/users', 'admin.pages.users')->name('users');
             Route::get('/getUsers', [AuthorController::class, 'getUsers'])->name('getUsers');
             Route::post('/delete-user', [AuthorController::class, 'delete_user'])->name('delete-user');

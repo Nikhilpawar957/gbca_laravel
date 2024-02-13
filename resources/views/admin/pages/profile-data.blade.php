@@ -1,12 +1,12 @@
 @extends('admin.layout.pages-layout')
-@section('pageTitle', isset($pageTitle) ? $pageTitle : 'Contact Form | ' . env('APP_NAME'))
+@section('pageTitle', isset($pageTitle) ? $pageTitle : 'Profile Form | ' . env('APP_NAME'))
 @push('stylesheets')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.4.1/css/rowReorder.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <style>
-        #contact_data_table_length {
+        #profile_data_table_length {
             display: none !important;
         }
     </style>
@@ -22,7 +22,7 @@
                         Overview
                     </div>
                     <h2 class="page-title">
-                        Contact Form Data
+                        Profile Form Data
                     </h2>
                 </div>
                 <div class="col-auto ms-auto d-print-none">
@@ -41,7 +41,7 @@
                 <div class="card">
                     <div class="card-body border-bottom py-3">
                         <div id="table-default" class="table-responsive">
-                            <table id="contact_data_table" class="table w-100">
+                            <table id="profile_data_table" class="table w-100">
                                 <thead>
                                     <tr>
                                         <th style="width: 20px">
@@ -55,9 +55,6 @@
                                         </th>
                                         <th>
                                             Phone
-                                        </th>
-                                        <th>
-                                            Message
                                         </th>
                                         <th style="width: 180px">
                                             Date
@@ -111,7 +108,7 @@
                     },
                     setup: (picker) => {
                         picker.on('selected', (date1, date2) => {
-                            $('#contact_data_table').DataTable().draw();
+                            $('#profile_data_table').DataTable().draw();
                         });
                     },
                 });
@@ -120,7 +117,7 @@
 
 
         $(function() {
-            var table = $('#contact_data_table').DataTable({
+            var table = $('#profile_data_table').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,
@@ -138,11 +135,11 @@
                     'csv',
                     {
                         extend: 'excelHtml5',
-                        title: 'Contact_Form_Data_Export',
+                        title: 'Profile_Form_Data_Export',
                     },
                 ],
                 ajax: {
-                    url: "{{ route('author.getContactFormData') }}",
+                    url: "{{ route('author.getProfileFormData') }}",
                     data: function(data) {
                         data.date_range = $("#date_range").val();
                     }
@@ -167,12 +164,6 @@
                     {
                         data: 'phone',
                         name: 'phone',
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: 'message',
-                        name: 'message',
                         orderable: true,
                         searchable: true
                     },

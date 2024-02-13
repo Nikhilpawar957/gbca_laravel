@@ -6,7 +6,7 @@
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
                 <a href="{{ route('author.login') }}" class="navbar-brand navbar-brand-autodark">
-                    <img src="{{ asset('assets/img/gbc-llp-logo.png') }}" height="36" alt="" />
+                    <img src="{{ \App\Models\Setting::find(1)->logo }}" height="36" alt="" />
                 </a>
             </div>
             <div class="alert alert-danger d-none">Alert Danger</div>
@@ -17,18 +17,18 @@
                 <div class="card-body">
                     <h2 class="h2 text-center mb-4">Reset Password</h2>
                     <div class="mb-3">
-                        <label class="form-label required">Email Address</label>
-                        <input type="text" class="form-control" placeholder="Enter Username or Email" autocomplete="off"
-                            disabled />
-                        <span class="text-danger error-text email_error"></span>
+                        <input type="hidden" class="form-control" id="email" name="email"
+                            value="{{ $email }}" />
+                        <input type="hidden" class="form-control" id="token" name="token"
+                            value="{{ $token }}" />
                     </div>
                     <div class="mb-2">
                         <label class="form-label required">
                             Password
                         </label>
                         <div class="input-group input-group-flat">
-                            <input type="password" class="form-control" id="new_password" name="new_password" placeholder="New Password"
-                                autocomplete="off" />
+                            <input type="password" class="form-control" id="new_password" name="new_password"
+                                placeholder="New Password" autocomplete="off" />
                             <span class="input-group-text">
                                 <a href="javascript:void(0)" class="link-secondary" title="Show password"
                                     data-bs-toggle="tooltip" onclick="show_password()">
@@ -50,8 +50,8 @@
                             Confirm Password
                         </label>
                         <div class="input-group input-group-flat">
-                            <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" placeholder="Confirm Password"
-                                autocomplete="off" />
+                            <input type="password" class="form-control" id="confirm_new_password"
+                                name="confirm_new_password" placeholder="Confirm Password" autocomplete="off" />
                             <span class="input-group-text">
                                 <a href="javascript:void(0)" class="link-secondary" title="Show password"
                                     data-bs-toggle="tooltip" onclick="show_confirm_password()">
@@ -136,7 +136,7 @@
 
                         setTimeout(() => {
                             location.href = "{{ route('author.login') }}"
-                        }, 5000);
+                        }, 2000);
                     } else {
                         $('div.alert-danger').removeClass('d-none').text(response.msg)
                             .slideDown(5000).slideUp(
