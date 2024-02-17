@@ -34,28 +34,30 @@
                 <div class="col-lg-6 col-md-7">
                     <div class="form-section">
                         <form id="contact" class="contact-form1" action="{{ route('contact-form-submit') }}"
-                            method="post">
-                            <div class="alert alert-danger text-center" id="danger_register"
-                                style="display:none; margin-top:20px"></div>
-                            <div class="alert alert-success text-center" id="success_register"
-                                style="display:none; margin-top:20px"></div>
+                            method="post" autocomplete="off">
+                            <div class="alert alert-info" style="display:none; margin-top:20px"></div>
+                            <div class="alert alert-danger text-center" style="display:none; margin-top:20px"></div>
+                            <div class="alert alert-success text-center" style="display:none; margin-top:20px"></div>
                             <div class="contact-form__two">
                                 <div class="row">
                                     <div class="field contact-inner text-left col-lg-12">
                                         <span class="text-danger error-text full_name_error"></span>
-                                        <input type="text" name="full_name" id="full_name" placeholder="Enter Full Name" maxlength="255">
+                                        <input type="text" name="full_name" id="full_name"
+                                            placeholder="Enter Full Name eg: John Smith" maxlength="150">
                                         <label for="fullname">Full Name <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
                                         <span class="text-danger error-text email_error"></span>
-                                        <input type="text" name="email" id="email" placeholder="Enter E-mail" maxlength="255">
+                                        <input type="text" name="email" id="email"
+                                            placeholder="Enter Email Address eg: john@example.com" maxlength="150">
                                         <label for="email">E-mail <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
                                         <span class="text-danger error-text phone_error"></span>
                                         <input type="tel" name="phone" id="phone"
-                                            placeholder="Enter Contact Number" maxlength="10" onkeypress="return phone_validate(event)">
-                                        <label for="phone">Contact Number <span class="text-danger">*</span></label>
+                                            placeholder="Enter Phone Number eg: 9999933339" maxlength="10"
+                                            onkeypress="return phone_validate(event)">
+                                        <label for="phone">Phone Number <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner col-lg-12 text-left">
                                         <span class="text-danger error-text message_error"></span>
@@ -75,16 +77,20 @@
                 <div class="col-lg-6 col-md-5">
                     <div class="contact-info">
                         <p>
-                            <a href="tel:+912233213737"><img src="{{ asset('assets/img/icons/contact/call.png') }}" class="contact-icon"></a>
+                            <a href="tel:+912233213737"><img src="{{ asset('assets/img/icons/contact/call.png') }}"
+                                    class="contact-icon"></a>
                             +912233213737
                         </p>
                         <p>
-                            <a href="mailto:reachus@gbcaindia.com"><img src="{{ asset('assets/img/icons/contact/email.png') }}" class="contact-icon"></a>
+                            <a href="mailto:reachus@gbcaindia.com"><img
+                                    src="{{ asset('assets/img/icons/contact/email.png') }}" class="contact-icon"></a>
                             reachus@gbcaindia.com
                         </p>
                         <div class="addr">
                             <div class="icon">
-                                <a href="https://maps.app.goo.gl/szJHWK8rBuM8z5Ui8" target="_blank"><img src="{{ asset('assets/img/icons/contact/location.png') }}" class="contact-icon-diff"></a>
+                                <a href="https://maps.app.goo.gl/szJHWK8rBuM8z5Ui8" target="_blank"><img
+                                        src="{{ asset('assets/img/icons/contact/location.png') }}"
+                                        class="contact-icon-diff"></a>
                             </div>
                             <p> Benefice Business House, 3rd Level, 126, Mathuradas Mills Compound, N. M. Joshi Marg, Lower
                                 Parel (W), Mumbai - 400013, India.</p>
@@ -143,35 +149,75 @@
 
         $("form#contact").submit(function(e) {
             e.preventDefault();
-            var form = this;
-            var formdata = new FormData(form);
-            $.ajax({
-                url: $(form).attr('action'),
-                method: $(form).attr('method'),
-                data: formdata,
-                processData: false,
-                dataType: "json",
-                contentType: false,
-                beforeSend: function() {
-                    $(form).find('span.error-text').text('');
-                },
-                success: function(response) {
-                    //console.log(response);
-                    if (response.code == 1) {
-                        $(form)[0].reset();
-                        $("#success_register").text(response.msg);
-                        $("#success_register").slideDown("slow").delay(5000).slideUp();
-                    } else {
-                        $("#danger_register").text(response.msg);
-                        $("#danger_register").slideDown("slow").delay(5000).slideUp();
+            let form = this;
+            const fullNameregex = /^([\w]{3,})+\s+([\w\s]{3,})+$/i;
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
+
+            let full_name = $.trim($(form).find('[name="full_name"]').val());
+            let email = $.trim($(form).find('[name="email"]').val());
+            let phone = $.trim($(form).find('[name="phone"]').val());
+            let message = $.trim($(form).find('[name="message"]').val());
+
+            if (full_name === "") {
+                valid(form, 'full_name', 'Please Enter Full Name');
+                return false;
+            } else if (full_name !== "" && !fullNameregex.test(full_name)) {
+                valid(form, 'full_name', 'Please Enter Valid Full Name eg: John Smith');
+                return false;
+            } else if (email === "") {
+                valid(form, 'email', 'Please Enter Email Address');
+                return false;
+            } else if (email !== "" && !emailRegex.test(email)) {
+                valid(form, 'email', 'Please Enter Valid Email Address eg: john@example.com');
+                return false;
+            } else if (phone === "") {
+                valid(form, 'phone', 'Please Enter Phone Number');
+                return false;
+            } else if (phone !== "" && !phoneRegex.test(phone)) {
+                valid(form, 'phone', 'Please Enter Valid Phone Number eg: 9999922222');
+                return false;
+            } else if (message === "") {
+                valid(form, 'message', 'Please Write Some Message');
+                return false;
+            } else {
+                validate_clear();
+                var formdata = new FormData(form);
+                $.ajax({
+                    url: $(form).attr('action'),
+                    method: $(form).attr('method'),
+                    data: formdata,
+                    processData: false,
+                    dataType: "json",
+                    contentType: false,
+                    beforeSend: function() {
+                        $(form).find('span.error-text').text('');
+                        $(form).find(".alert-info").text('Please Wait...').slideDown("slow");
+                        $(form).find('button[type="submit"]').prop('disabled', true);
+                    },
+                    success: function(response) {
+                        //console.log(response);
+                        $(form).find(".alert-info").text('').slideUp();
+                        if (response.code == 1) {
+                            $(form)[0].reset();
+                            $(form).find(".alert-success").text(response.msg);
+                            $(form).find(".alert-success").slideDown("slow").delay(5000).slideUp();
+                        } else {
+                            $(form).find(".alert-danger").text(response.msg);
+                            $(form).find(".alert-danger").slideDown("slow").delay(5000).slideUp();
+                        }
+                        $(form).find('button[type="submit"]').prop('disabled', false);
+                    },
+                    error: function(response) {
+                        $.each(response.responseJSON.errors, function(prefix, val) {
+                            $(form).find('span.' + prefix + '_error').text(val[0]);
+                        });
+                        $(form).find(".alert-info").text('').slideUp();
+                        $(form).find('button[type="submit"]').prop('disabled', false);
                     }
-                },
-                error: function(response) {
-                    $.each(response.responseJSON.errors, function(prefix, val) {
-                        $(form).find('span.' + prefix + '_error').text(val[0]);
-                    });
-                }
-            });
+                });
+            }
+
         });
     </script>
 @endpush

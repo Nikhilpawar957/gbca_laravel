@@ -78,7 +78,7 @@
         </div>
         <div class="collapse navbar-collapse" id="sidebar-menu">
             <ul class="navbar-nav pt-lg-3">
-                <li class="nav-item">
+                <li class="nav-item {{ request()->is('author/home') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('author.home') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dashboard"
@@ -95,7 +95,7 @@
                         </span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->is('author/categories') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('author.categories') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-category"
@@ -113,7 +113,7 @@
                         </span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->is('author/resources') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('author.resources') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-news"
@@ -132,8 +132,8 @@
                         </span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('author.users') }}">
+                <li class="nav-item {{ request()->is('author/alumnis') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('author.alumnis') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group"
                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -152,8 +152,9 @@
                         </span>
                     </a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown"
+                <li
+                    class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->is('author/contact-data') || request()->is('author/profile-data') ? 'show' : '' }}" href="#navbar-help" data-bs-toggle="dropdown"
                         data-bs-auto-close="false" role="button" aria-expanded="true">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-forms"
@@ -172,11 +173,11 @@
                             Forms
                         </span>
                     </a>
-                    <div class="dropdown-menu" data-bs-popper="static">
-                        <a class="dropdown-item" href="{{ route('author.contact-data') }}">
+                    <div class="dropdown-menu {{ request()->is('author/contact-data') || request()->is('author/profile-data') ? 'show' : '' }}" data-bs-popper="static">
+                        <a class="dropdown-item {{ request()->is('author/contact-data') ? 'active' : '' }}" href="{{ route('author.contact-data') }}">
                             Contact Form
                         </a>
-                        <a class="dropdown-item" href="{{ route('author.profile-data') }}">
+                        <a class="dropdown-item {{ request()->is('author/profile-data') ? 'active' : '' }}" href="{{ route('author.profile-data') }}">
                             Profile Form
                         </a>
                     </div>

@@ -24,7 +24,6 @@ Route::view('/', 'frontend.pages.index')->name('index');
 Route::view('/about-us', 'frontend.pages.about-us')->name('about-us');
 
 Route::prefix('services')->name('services.')->group(function () {
-    Route::view('/', 'frontend.pages.services')->name('services');
     Route::view('/transaction-and-business-structuring', 'frontend.pages.transaction-and-business-structuring')->name('transaction-and-business-structuring');
     Route::view('/audit-and-assurance', 'frontend.pages.audit-and-assurance')->name('audit-and-assurance');
     Route::view('/direct-tax', 'frontend.pages.direct-tax')->name('direct-tax');

@@ -84,7 +84,6 @@
     <script src="{{ asset('assets/js/custom_scripts.js') }}"></script>
 
     <script>
-
         $.ajaxSetup({
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content'),
@@ -94,40 +93,72 @@
         $("form#profileForm").submit(function(e) {
             e.preventDefault();
             var form = this;
-            var formdata = new FormData(form);
-            $.ajax({
-                url: $(form).attr('action'),
-                method: $(form).attr('method'),
-                data: formdata,
-                processData: false,
-                dataType: "json",
-                contentType: false,
-                beforeSend: function() {
-                    $(form).find('span.error-text').text('');
-                    $(form).find('button[type="submit"]').prop('disabled', true);
-                },
-                success: function(response) {
-                    //console.log(response);
-                    if (response.code == 1) {
-                        $(form)[0].reset();
-                        $(".successmsg").text(response.msg);
-                        $(".successmsg").slideDown("slow").delay(3000).slideUp();
-                        setTimeout(() => {
-                            $("#profileModal").modal("hide");
-                        }, 3000);
-                    } else {
-                        $(".errmsg").text(response.msg);
-                        $(".errmsg").slideDown("slow").delay(3000).slideUp();
+
+            const fullNameregex = /^([\w]{3,})+\s+([\w\s]{3,})+$/i;
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
+
+            let full_name = $.trim($(form).find('[name="full_name"]').val());
+            let email = $.trim($(form).find('[name="email"]').val());
+            let phone = $.trim($(form).find('[name="phone"]').val());
+
+            if (full_name === "") {
+                valid(form, 'full_name', 'Please Enter Full Name');
+                return false;
+            } else if (full_name !== "" && !fullNameregex.test(full_name)) {
+                valid(form, 'full_name', 'Please Enter Valid Full Name eg: John Smith');
+                return false;
+            } else if (email === "") {
+                valid(form, 'email', 'Please Enter Email Address');
+                return false;
+            } else if (email !== "" && !emailRegex.test(email)) {
+                valid(form, 'email', 'Please Enter Valid Email Address eg: john@example.com');
+                return false;
+            } else if (phone === "") {
+                valid(form, 'phone', 'Please Enter Phone Number');
+                return false;
+            } else if (phone !== "" && !phoneRegex.test(phone)) {
+                valid(form, 'phone', 'Please Enter Valid Phone Number eg: 9999922222');
+                return false;
+            } else {
+                var formdata = new FormData(form);
+                $.ajax({
+                    url: $(form).attr('action'),
+                    method: $(form).attr('method'),
+                    data: formdata,
+                    processData: false,
+                    dataType: "json",
+                    contentType: false,
+                    beforeSend: function() {
+                        $(form).find('span.error-text').text('');
+                        $(form).find(".alert-info").text('Please Wait...').slideDown("slow");
+                        $(form).find('button[type="submit"]').prop('disabled', true);
+                    },
+                    success: function(response) {
+                        //console.log(response);
+                        $(form).find(".alert-info").text('').slideUp();
+                        if (response.code == 1) {
+                            $(form)[0].reset();
+                            $(".successmsg").text(response.msg);
+                            $(".successmsg").slideDown("slow").delay(3000).slideUp();
+                            setTimeout(() => {
+                                $("#profileModal").modal("hide");
+                            }, 3000);
+                        } else {
+                            $(".errmsg").text(response.msg);
+                            $(".errmsg").slideDown("slow").delay(3000).slideUp();
+                        }
+                        $(form).find('button[type="submit"]').prop('disabled', false);
+                    },
+                    error: function(response) {
+                        $.each(response.responseJSON.errors, function(prefix, val) {
+                            $(form).find('span.' + prefix + '_error').text(val[0]);
+                        });
+                        $(form).find(".alert-info").text('').slideUp();
+                        $(form).find('button[type="submit"]').prop('disabled', false);
                     }
-                    $(form).find('button[type="submit"]').prop('disabled', false);
-                },
-                error: function(response) {
-                    $.each(response.responseJSON.errors, function(prefix, val) {
-                        $(form).find('span.' + prefix + '_error').text(val[0]);
-                    });
-                    $(form).find('button[type="submit"]').prop('disabled', false);
-                }
-            });
+                });
+            }
         });
     </script>
 

@@ -83,12 +83,14 @@
         });
 
         $(document).ready(function() {
-
             $('form#loginForm').submit(function(e) {
                 e.preventDefault();
                 toastr.remove();
                 var form = this;
                 var formdata = new FormData(form);
+                @if (isset($_GET['returnUrl']) && !empty($_GET['returnUrl']))
+                    formdata.append('returnUrl', "{{ $_GET['returnUrl'] }}");
+                @endif
                 $.ajax({
                     url: $(form).attr('action'),
                     method: $(form).attr('method'),
@@ -102,7 +104,8 @@
                         $('div.alert').text('');
                     },
                     success: function(response) {
-                        //console.log(response);
+                        // console.log(response);
+                        // return false;
                         if (response.code == 1) {
                             $(form)[0].reset();
                             location.href = "{{ route('author.home') }}";

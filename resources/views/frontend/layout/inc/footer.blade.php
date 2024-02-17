@@ -126,33 +126,35 @@
                 <section class="contact-us modal-form">
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
-                            <div class="alert alert-danger errmsg text-center" style="display:none;"></div>
-                            <div class="alert alert-success successmsg text-center" style="display:none;"></div>
+
                             <div class="form-section">
                                 <form id="profileForm" class="contact-form1"
-                                    action="{{ route('profile-form-submit') }}" method="post">
+                                    action="{{ route('profile-form-submit') }}" method="post" autocomplete="off">
+                                    <div class="alert alert-info" style="display:none; margin-top:20px"></div>
+                                    <div class="alert alert-danger text-center" style="display:none;"></div>
+                                    <div class="alert alert-success text-center" style="display:none;"></div>
                                     <div class="contact-form__two">
                                         <div class="row">
                                             <div class="field contact-inner text-left col-lg-12">
                                                 <span class="text-danger error-text full_name_error"></span>
                                                 <input type="text" name="full_name" id="full_name"
-                                                    placeholder="Enter Full Name" maxlength="255">
+                                                    placeholder="Enter Full Name" maxlength="150">
                                                 <label for="full_name">Full Name <span
                                                         class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner text-left col-lg-12 mb-0">
                                                 <span class="text-danger error-text email_error"></span>
                                                 <input type="text" name="email" id="email"
-                                                    placeholder="Enter E-mail" maxlength="255">
+                                                    placeholder="Enter E-mail" maxlength="150">
                                                 <label for="email">E-mail <span
                                                         class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner text-left col-lg-12 mb-0">
                                                 <span class="text-danger error-text phone_error"></span>
                                                 <input type="tel" name="phone" id="phone"
-                                                    placeholder="Enter Contact Number" maxlength="10"
+                                                    placeholder="Enter Phone Number" maxlength="10"
                                                     onkeypress="return phone_validate(event)">
-                                                <label for="phone">Contact Number <span
+                                                <label for="phone">Phone Number <span
                                                         class="text-danger">*</span></label>
                                             </div>
                                         </div>

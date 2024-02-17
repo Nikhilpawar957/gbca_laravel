@@ -17,14 +17,11 @@ use App\Http\Controllers\AuthorController;
 
 
 Route::post('/register', [AuthorController::class, 'register'])->name('register');
-Route::post('/login', [AuthorController::class, 'login'])->name('login');
+Route::match(['get', 'post'], '/login', [AuthorController::class, 'login'])->name('login');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-
-
-
 });

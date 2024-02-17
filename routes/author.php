@@ -43,7 +43,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
             Route::get('/getContactFormData', [AuthorController::class, 'getContactFormData'])->name('getContactFormData');
             Route::view('/profile-data', 'admin.pages.profile-data')->name('profile-data');
             Route::get('/getProfileFormData', [AuthorController::class, 'getProfileFormData'])->name('getProfileFormData');
-            Route::view('/users', 'admin.pages.users')->name('users');
+            Route::view('/alumnis', 'admin.pages.users')->name('alumnis');
             Route::get('/getUsers', [AuthorController::class, 'getUsers'])->name('getUsers');
             Route::post('/delete-user', [AuthorController::class, 'delete_user'])->name('delete-user');
             Route::post('/change-user-status', [AuthorController::class, 'change_user_status'])->name('change-user-status');

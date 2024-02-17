@@ -394,7 +394,7 @@ class AuthorController extends Controller
                 ->leftJoin('categories AS c', 'r.resource_category_id', '=', 'c.id')
                 ->leftJoin('categories AS s', 'r.resource_subcategory_id', '=', 's.id')
                 ->whereNull('r.deleted_at')
-                ->orderByDesc('r.id')
+                ->orderByDesc('r.created_at')
                 ->get();
 
             return Datatables::of($data)

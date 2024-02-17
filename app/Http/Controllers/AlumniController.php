@@ -17,22 +17,22 @@ class AlumniController extends Controller
     public function sign_up_form_submit(Request $request)
     {
         $request->validate([
-            'full_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'unique:users,email', 'max:255'],
-            'phone' => ['required', 'min:10', 'unique:users,phone', 'max:10'],
-            'doj' => ['required', 'numeric']
+            'full_name' => ['required', 'string', 'max:150'],
+            'email' => ['required', 'string', 'email', 'unique:users,email', 'max:150'],
+            'phone' => ['required', 'min:10', 'unique:users,phone'],
+            'year_of_joining' => ['required', 'numeric']
         ], [
             'fullname.required' => 'Full Name is Required',
             'email.required' => 'Email is Required',
             'phone.required' => 'Phone Number is Required',
-            'doj.required' => 'Year of joining is Required',
+            'year_of_joining.required' => 'Year of joining is Required',
         ]);
 
         $data = [
             'full_name' => $request->full_name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'doj' => $request->doj,
+            'year_of_joining' => $request->year_of_joining,
             'password' => Hash::make($request->phone)
         ];
 
@@ -139,7 +139,7 @@ class AlumniController extends Controller
                     });
 
                     if ($checkUser->phone != null) {
-                        send_sms($checkUser->phone,'send_otp',$data);
+                        send_sms($checkUser->phone, 'send_otp', $data);
                     }
 
                     $response = [

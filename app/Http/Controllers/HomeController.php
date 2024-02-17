@@ -297,7 +297,12 @@ class HomeController extends Controller
             $resource = Resources::selectRaw('resources.*,categories.category_name')
                 ->leftJoin('categories', 'resources.resource_category_id', '=', 'categories.id')
                 ->where('resource_slug', '=', $resource_slug)
+                ->whereNull('resources.deleted_at')
                 ->first();
+
+            if (empty($resource)) {
+                abort(404);
+            }
 
             $response = [
                 'pageTitle' => $resource->resource_title . " | GBCA & Associates LLP Chartered Accountants",

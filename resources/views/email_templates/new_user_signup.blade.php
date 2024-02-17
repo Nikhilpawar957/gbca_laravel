@@ -34,7 +34,7 @@
                         <strong>Name:</strong> {{ $full_name }}<br />
                         <strong>E-mail:</strong> {{ $email }}<br />
                         <strong>Mobile:</strong>{{ $phone }} <br />
-                        <strong>Year of Joining:</strong> {{ $doj }} <br />
+                        <strong>Year of Joining:</strong> {{ $year_of_joining }} <br />
                     </p><br />
                 </div>
             </div><br />

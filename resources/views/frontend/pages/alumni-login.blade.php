@@ -242,7 +242,8 @@
                                                         placeholder="Enter Email / Mobile No." maxlength="255">
                                                     <label for="login_id">Enter Email / Mobile No.</label>
                                                 </div>
-                                                <div class="field contact-inner text-left col-lg-12 mb-0">
+                                                <div id="otp_div"
+                                                    class="field contact-inner text-left col-lg-12 mb-0 d-none">
                                                     <span class="text-danger error-text otp_error"></span>
                                                     <input type="text" name="otp" id="otp"
                                                         placeholder="Enter OTP" maxlength="6">
@@ -272,30 +273,31 @@
                                 <div class="sign-up-form">
                                     <form id="contact" class="contact-form1 signUpForm"
                                         action="{{ route('sign-up-form-submit') }}" method="post">
-                                        <div class="alert alert-danger text-center danger_register"
-                                            style="display:none; margin-top:20px"></div>
-                                        <div class="alert alert-success text-center success_register"
+                                        <div class="alert alert-info" style="display:none; margin-top:20px"></div>
+                                        <div class="alert alert-danger text-center" style="display:none; margin-top:20px">
+                                        </div>
+                                        <div class="alert alert-success text-center"
                                             style="display:none; margin-top:20px"></div>
                                         <div class="contact-form__two">
                                             <div class="row">
                                                 <div class="field contact-inner text-left col-lg-12">
                                                     <span class="text-danger error-text full_name_error"></span>
                                                     <input type="text" name="full_name" id="full_name"
-                                                        placeholder="Enter Full Name" maxlength="255">
+                                                        placeholder="Enter Full Name" maxlength="150">
                                                     <label for="full_name">Full Name</label>
                                                 </div>
                                                 <div class="field contact-inner text-left col-lg-12 mb-0">
                                                     <span class="text-danger error-text email_error"></span>
-                                                    <input type="email" name="email" id="email"
-                                                        placeholder="Enter E-mail" maxlength="255">
+                                                    <input type="text" name="email" id="email"
+                                                        placeholder="Enter E-mail" maxlength="150">
                                                     <label for="email">E-mail</label>
                                                 </div>
                                                 <div class="field contact-inner text-left col-lg-12 mb-0">
                                                     <span class="text-danger error-text phone_error"></span>
                                                     <input type="tel" name="phone" id="phone"
                                                         onkeypress="return phone_validate(event)"
-                                                        placeholder="Enter Contact Number" maxlength="255">
-                                                    <label for="phone">Contact Number</label>
+                                                        placeholder="Enter Phone Number" maxlength="10">
+                                                    <label for="phone">Phone Number</label>
                                                 </div>
                                                 <div class="field contact-inner text-left col-lg-12 mb-0">
                                                     <span class="text-danger error-text year_of_joining_error"></span>
@@ -345,75 +347,130 @@
 
         $("form.signUpForm").submit(function(e) {
             e.preventDefault();
-            var form = this;
-            var formdata = new FormData(form);
-            $.ajax({
-                url: $(form).attr('action'),
-                method: $(form).attr('method'),
-                data: formdata,
-                processData: false,
-                dataType: "json",
-                contentType: false,
-                beforeSend: function() {
-                    $(form).find('span.error-text').text('');
-                },
-                success: function(response) {
-                    //console.log(response);
-                    if (response.code == 1) {
-                        $(form)[0].reset();
-                        $(form).find(".success_register").text(response.msg);
-                        $(form).find(".success_register").slideDown("slow").delay(5000).slideUp();
-                    } else {
-                        $(form).find(".danger_register").text(response.msg);
-                        $(form).find(".danger_register").slideDown("slow").delay(5000).slideUp();
+
+            e.preventDefault();
+            let form = this;
+            const fullNameregex = /^([\w]{3,})+\s+([\w\s]{3,})+$/i;
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const phoneRegex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
+
+            const currentYear = new Date().getFullYear();
+
+            let full_name = $.trim($(form).find('[name="full_name"]').val());
+            let email = $.trim($(form).find('[name="email"]').val());
+            let phone = $.trim($(form).find('[name="phone"]').val());
+            let year_of_joining = $.trim($(form).find('[name="year_of_joining"]').val());
+
+            if (full_name === "") {
+                valid(form, 'full_name', 'Please Enter Full Name');
+                return false;
+            } else if (full_name !== "" && !fullNameregex.test(full_name)) {
+                valid(form, 'full_name', 'Please Enter Valid Full Name eg: John Smith');
+                return false;
+            } else if (email === "") {
+                valid(form, 'email', 'Please Enter Email Address');
+                return false;
+            } else if (email !== "" && !emailRegex.test(email)) {
+                valid(form, 'email', 'Please Enter Valid Email Address eg: john@example.com');
+                return false;
+            } else if (phone === "") {
+                valid(form, 'phone', 'Please Enter Phone Number');
+                return false;
+            } else if (phone !== "" && !phoneRegex.test(phone)) {
+                valid(form, 'phone', 'Please Enter Valid Phone Number eg: 9999922222');
+                return false;
+            } else if (year_of_joining === "") {
+                valid(form, 'year_of_joining', 'Please Enter Year Of Joining');
+                return false;
+            } else if (year_of_joining !== "" && parseInt(year_of_joining) > currentYear) {
+                valid(form, 'year_of_joining', 'Year Of Joining cannot be greater than current year eg: ' + currentYear);
+                return false;
+            } else {
+                validate_clear();
+                var formdata = new FormData(form);
+                $.ajax({
+                    url: $(form).attr('action'),
+                    method: $(form).attr('method'),
+                    data: formdata,
+                    processData: false,
+                    dataType: "json",
+                    contentType: false,
+                    beforeSend: function() {
+                        $(form).find('span.error-text').text('');
+                        $(form).find(".alert-info").text('Please Wait...').slideDown("slow");
+                        $(form).find('button[type="submit"]').prop('disabled', true);
+                    },
+                    success: function(response) {
+                        //console.log(response);
+                        $(form).find(".alert-info").text('').slideUp();
+                        if (response.code == 1) {
+                            $(form)[0].reset();
+                            $(form).find(".alert-success").text(response.msg);
+                            $(form).find(".alert-success").slideDown("slow").delay(5000).slideUp();
+                        } else {
+                            $(form).find(".alert-danger").text(response.msg);
+                            $(form).find(".alert-danger").slideDown("slow").delay(5000).slideUp();
+                        }
+                        $(form).find('button[type="submit"]').prop('disabled', false);
+                    },
+                    error: function(response) {
+                        $.each(response.responseJSON.errors, function(prefix, val) {
+                            $(form).find('span.' + prefix + '_error').text(val[0]);
+                        });
+                        $(form).find(".alert-info").text('').slideUp();
+                        $(form).find('button[type="submit"]').prop('disabled', false);
                     }
-                },
-                error: function(response) {
-                    $.each(response.responseJSON.errors, function(prefix, val) {
-                        $(form).find('span.' + prefix + '_error').text(val[0]);
-                    });
-                }
-            });
+                });
+            }
         });
 
         function sendOTP() {
+            var signInForm = document.getElementsByClassName('signInForm');
             var login_id = $.trim($("input[name='login_id']").val());
-            var formdata = new FormData();
-            formdata.append('login_id', login_id);
-            $.ajax({
-                url: "{{ route('send-otp') }}",
-                method: "POST",
-                data: formdata,
-                processData: false,
-                dataType: "json",
-                contentType: false,
-                beforeSend: function() {
-                    $(".signInForm").find('span.error-text').text('');
-                    $(".signInForm").find('button').prop('disabled', true);
-                },
-                success: function(response) {
-                    //console.log(response);
-                    if (response.code == 1) {
-                        $(".signInForm").find(".success_register").text(response.msg);
-                        $(".signInForm").find(".success_register").slideDown("slow").delay(5000).slideUp();
-                        $("#send_otp").addClass("d-none");
-                        $("#sign_otp_div").removeClass("d-none");
-                    } else {
-                        $(".signInForm").find(".danger_register").text(response.msg);
-                        $(".signInForm").find(".danger_register").slideDown("slow").delay(5000).slideUp();
+            if (login_id === "") {
+                valid(signInForm, 'login_id', 'Please Enter Email or Mobile Number');
+                return false;
+            } else {
+                validate_clear(signInForm);
+                var formdata = new FormData();
+                formdata.append('login_id', login_id);
+                $.ajax({
+                    url: "{{ route('send-otp') }}",
+                    method: "POST",
+                    data: formdata,
+                    processData: false,
+                    dataType: "json",
+                    contentType: false,
+                    beforeSend: function() {
+                        $(".signInForm").find('span.error-text').text('');
+                        $(".signInForm").find('button').prop('disabled', true);
+                    },
+                    success: function(response) {
+                        //console.log(response);
+                        if (response.code == 1) {
+                            $(".signInForm").find(".success_register").text(response.msg);
+                            $(".signInForm").find(".success_register").slideDown("slow").delay(5000).slideUp();
+                            $("#otp_div").removeClass("d-none");
+                            $("#send_otp").addClass("d-none");
+                            $("#sign_otp_div").removeClass("d-none");
+                        } else {
+                            $(".signInForm").find(".danger_register").text(response.msg);
+                            $(".signInForm").find(".danger_register").slideDown("slow").delay(5000).slideUp();
+                        }
+                        $(".signInForm").find('button').prop('disabled', false);
+                        setTimeout(() => {
+                            expireOTP();
+                        }, 30000);
+                    },
+                    error: function(response) {
+                        $.each(response.responseJSON.errors, function(prefix, val) {
+                            $(".signInForm").find('span.' + prefix + '_error').text(val[0]);
+                        });
+                        $(".signInForm").find('button').prop('disabled', false);
                     }
-                    $(".signInForm").find('button').prop('disabled', false);
-                    // setTimeout(() => {
-                    //     expireOTP();
-                    // }, 30000);
-                },
-                error: function(response) {
-                    $.each(response.responseJSON.errors, function(prefix, val) {
-                        $(".signInForm").find('span.' + prefix + '_error').text(val[0]);
-                    });
-                    $(".signInForm").find('button').prop('disabled', false);
-                }
-            });
+                });
+            }
+
         }
 
         function expireOTP() {
