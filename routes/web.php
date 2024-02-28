@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AlumniController;
 use Illuminate\Support\Facades\Route;
+use Spatie\Honeypot\ProtectAgainstSpam;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,12 +49,15 @@ Route::view('/contact-us', 'frontend.pages.contact-us')->name('contact-us');
 Route::view('/alumni-login', 'frontend.pages.alumni-login')->name('login');
 
 // Contact Form Submit
-Route::post('/contact-form-submit', [HomeController::class, 'contact_form_submit'])->name('contact-form-submit');
-Route::post('/profile-form-submit', [HomeController::class, 'profile_form_submit'])->name('profile-form-submit');
-Route::post('/sign-up-form-submit', [AlumniController::class, 'sign_up_form_submit'])->name('sign-up-form-submit');
-Route::post('/send-otp', [AlumniController::class, 'send_otp'])->name('send-otp');
-Route::post('/confirm-otp', [AlumniController::class, 'confirm_otp'])->name('confirm-otp');
-Route::post('/expire-otp', [AlumniController::class, 'expire_otp'])->name('expire-otp');
+Route::middleware(ProtectAgainstSpam::class)->group(function () {
+    Route::post('/contact-form-submit', [HomeController::class, 'contact_form_submit'])->name('contact-form-submit');
+    Route::post('/profile-form-submit', [HomeController::class, 'profile_form_submit'])->name('profile-form-submit');
+    Route::post('/sign-up-form-submit', [AlumniController::class, 'sign_up_form_submit'])->name('sign-up-form-submit');
+    Route::post('/send-otp', [AlumniController::class, 'send_otp'])->name('send-otp');
+    Route::post('/confirm-otp', [AlumniController::class, 'confirm_otp'])->name('confirm-otp');
+    Route::post('/expire-otp', [AlumniController::class, 'expire_otp'])->name('expire-otp');
+});
+
 
 // Alumni Logged in pages
 Route::middleware(['auth:web'])->group(function () {

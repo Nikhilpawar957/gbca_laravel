@@ -35,6 +35,7 @@
                     <div class="form-section">
                         <form id="contact" class="contact-form1" action="{{ route('contact-form-submit') }}"
                             method="post" autocomplete="off">
+                            @honeypot
                             <div class="alert alert-info" style="display:none; margin-top:20px"></div>
                             <div class="alert alert-danger text-center" style="display:none; margin-top:20px"></div>
                             <div class="alert alert-success text-center" style="display:none; margin-top:20px"></div>
