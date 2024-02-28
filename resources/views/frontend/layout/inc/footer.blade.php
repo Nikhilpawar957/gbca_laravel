@@ -130,6 +130,7 @@
                             <div class="form-section">
                                 <form id="profileForm" class="contact-form1"
                                     action="{{ route('profile-form-submit') }}" method="post" autocomplete="off">
+                                    @honeypot
                                     <div class="alert alert-info" style="display:none; margin-top:20px"></div>
                                     <div class="alert alert-danger text-center" style="display:none;"></div>
                                     <div class="alert alert-success text-center" style="display:none;"></div>

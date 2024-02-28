@@ -230,6 +230,7 @@
                                 aria-labelledby="login-tab">
                                 <div class="login-form">
                                     <form id="contact" class="contact-form1 signInForm" action="" method="post">
+                                        @honeypot
                                         <div class="contact-form__two">
                                             <div class="alert alert-danger text-center danger_register"
                                                 style="display:none; margin-top:20px"></div>
@@ -273,6 +274,7 @@
                                 <div class="sign-up-form">
                                     <form id="contact" class="contact-form1 signUpForm"
                                         action="{{ route('sign-up-form-submit') }}" method="post">
+                                        @honeypot
                                         <div class="alert alert-info" style="display:none; margin-top:20px"></div>
                                         <div class="alert alert-danger text-center" style="display:none; margin-top:20px">
                                         </div>
