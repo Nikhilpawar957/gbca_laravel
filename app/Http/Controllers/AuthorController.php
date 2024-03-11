@@ -261,7 +261,7 @@ class AuthorController extends Controller
 
             $data = DB::table('categories AS c')
                 ->selectRaw('c.id,c.category_image,c.category_name,c.ordering, COUNT(DISTINCT s.id) AS subcat_count, COUNT(DISTINCT CASE WHEN r.resource_category_id IS NOT NULL THEN r.id END) as resources_count')
-                ->selectRaw("date_format(c.created_at, '%M %d,%Y') as date")
+                ->selectRaw("date_format(c.created_at, '%b %d,%Y') as date")
                 ->leftJoin('categories AS s', 'c.id', '=', 's.parent_category')
                 ->leftJoin('resources AS r', 'c.id', '=', 'r.resource_category_id')
                 ->whereRaw('(c.parent_category IS NULL OR c.parent_category = 0)')
@@ -326,7 +326,7 @@ class AuthorController extends Controller
 
             $data = DB::table('categories AS s')
                 ->selectRaw('s.id,s.category_image,c.category_name,s.ordering, s.category_name as subcategory_name,  COUNT(DISTINCT CASE WHEN r.resource_category_id IS NOT NULL THEN r.id END) AS resources_count')
-                ->selectRaw("date_format(c.created_at, '%M %d,%Y') as date")
+                ->selectRaw("date_format(c.created_at, '%b %d,%Y') as date")
                 ->leftJoin('categories AS c', 's.parent_category', '=', 'c.id')
                 ->leftJoin('resources AS r', 's.id', '=', 'r.resource_subcategory_id')
                 ->whereRaw('(s.parent_category IS NOT NULL AND s.parent_category != 0)')
@@ -390,7 +390,7 @@ class AuthorController extends Controller
         if ($request->ajax()) {
             $data = DB::table('resources AS r')
                 ->selectRaw("r.*,c.category_name AS 'category_name',s.category_name AS 'subcategory_name'")
-                ->selectRaw("date_format(r.created_at, '%M %d,%Y') as date")
+                ->selectRaw("date_format(r.created_at, '%b %d,%Y') as date")
                 ->leftJoin('categories AS c', 'r.resource_category_id', '=', 'c.id')
                 ->leftJoin('categories AS s', 'r.resource_subcategory_id', '=', 's.id')
                 ->whereNull('r.deleted_at')
@@ -443,7 +443,7 @@ class AuthorController extends Controller
     {
         if ($request->ajax()) {
             $data = DB::table('contact_forms AS c')
-                ->selectRaw("*,date_format(c.created_at, '%M %d,%Y') as date")
+                ->selectRaw("*,date_format(c.created_at, '%b %d,%Y') as date")
                 ->orderByDesc('id');
 
             if ($request->filled('date_range')) {
@@ -471,7 +471,7 @@ class AuthorController extends Controller
     {
         if ($request->ajax()) {
             $data = DB::table('profile_form AS p')
-                ->selectRaw("*,date_format(p.created_at, '%M %d,%Y') as date")
+                ->selectRaw("*,date_format(p.created_at, '%b %d,%Y') as date")
                 ->orderByDesc('id');
 
             if ($request->filled('date_range')) {
@@ -499,7 +499,7 @@ class AuthorController extends Controller
     {
         if ($request->ajax()) {
             $data = DB::table('users AS u')
-                ->selectRaw("*,date_format(u.created_at, '%M %d,%Y') as date")
+                ->selectRaw("*,date_format(u.created_at, '%b %d,%Y') as date")
                 ->where('role', '!=', 1)
                 ->orderByDesc('id');
 
