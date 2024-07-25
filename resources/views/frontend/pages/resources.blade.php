@@ -54,6 +54,32 @@
         .resou-content .desc-line1 a {
             color: #e97f17;
         }
+
+        .pagination,
+        .jsgrid .jsgrid-pager {
+            display: flex;
+            padding-left: 0;
+            list-style: none;
+            border-radius: 0.25rem
+        }
+
+        .page-link {
+            color: black
+        }
+
+        .pagination.pagination-rounded-flat .page-item {
+            margin: 0 .25rem
+        }
+
+        .pagination-success .page-item.active .page-link {
+            background: #e97f17;
+            border-color: #e97f17
+        }
+
+        .pagination.pagination-rounded-flat .page-item .page-link {
+            border: none;
+            border-radius: 50px;
+        }
     </style>
 @endpush
 @section('content')
@@ -144,8 +170,9 @@
                                                         <p>Year:</p>
                                                         <select class="year_filter" id="year_{{ $category->id }}"
                                                             onchange="return get_resources('{{ $category->category_slug }}',this.value,'')">
+                                                            <option value="">Select Year</option>
                                                             @foreach ($years as $key => $year)
-                                                                <option {{ $key == 0 ? 'selected' : '' }}
+                                                                <option
                                                                     value="{{ $year->resource_year }}">
                                                                     {{ $year->resource_year }}</option>
                                                             @endforeach
@@ -173,15 +200,13 @@
                                             </div>
                                         </div>
                                         <div class="resource_list"></div>
-                                        <nav class="mt-3 float-right">
-                                            <ul class="pagination">
-                                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                            </ul>
-                                        </nav>
+                                        <div class="col-md-12 col-sm-12 grid-margin stretch-card">
+                                            <nav class="mt-3">
+                                                <ul class="pagination d-flex justify-content-center flex-wrap pagination-rounded-flat pagination-success"
+                                                    id="paginationControls_{{ $category->category_slug }}">
+                                                </ul>
+                                            </nav>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -225,12 +250,16 @@
             if (category_slug == undefined) {
                 category_slug = $(".newsletter-main.active").attr('data-slug');
             }
-            get_resources(category_slug);
+
+            var year = $("#v-pills-" + category_slug + ".active .year_filter").val();
+
+            get_resources(category_slug, year, "", "", 1);
         }
 
         $(".resource_category").on('click', function() {
             var category_slug = $(this).attr('data-slug');
-            get_resources(category_slug);
+            var year = $("#v-pills-" + category_slug + ".active .year_filter").val();
+            get_resources(category_slug, year, "", "", 1);
         });
 
 
@@ -255,12 +284,14 @@
         });
 
 
-        function get_resources(category_slug, year = "", month = "", search = "") {
+        function get_resources(category_slug, year = "", month = "", search = "", page = 1) {
             var formdata = new FormData();
             formdata.append('category_slug', category_slug);
             formdata.append('year', year);
             formdata.append('month', month);
             formdata.append('search', search);
+            formdata.append('page', page);
+            formdata.append('limit', 4);
             $.ajax({
                 url: "{{ route('resources.get_resources') }}",
                 method: 'POST',
@@ -270,7 +301,7 @@
                 contentType: false,
                 beforeSend: function() {},
                 success: function(response) {
-                    //console.log(response);
+                    //console.log(response.total_pages);
                     var html = '';
                     response.resources.forEach(element => {
                         html +=
@@ -301,8 +332,87 @@
                         $(".resource_tab.active .month_filter").html("");
                         $(".resource_tab.active .month_filter").html(months_option);
                     }
+
+                    let paginationControls = generatePaginationControls(response.total_pages, page);
+                    $("#paginationControls_" + category_slug).html(paginationControls);
+
+                    $(".pagination-link").on("click", function(e) {
+                        e.preventDefault();
+                        let selectedPage = $(this).data("page");
+
+                        let selectedYear = $("#v-pills-" + category_slug + ".active.show .year_filter")
+                            .find(":selected").val();
+                        console.log(selectedYear);
+
+                        let selectedMonth = $("#v-pills-" + category_slug +
+                            ".active .month_filter").find(":selected").val();
+                        console.log(selectedMonth);
+
+                        let selectedSearch = $("#v-pills-" + category_slug +
+                            ".active .searchTerm").val();
+                        console.log(selectedSearch);
+
+                        get_resources(category_slug, selectedYear, selectedMonth, selectedSearch,
+                            selectedPage);
+                    });
                 }
             });
+        }
+
+        function generatePaginationControls(totalPages, currentPage) {
+            let paginationControls = '';
+
+            if (totalPages > 1) {
+                // Previous button
+                paginationControls += `<li class="page-item ${(currentPage === 1) ? 'disabled' : ''}">
+                                    <a class="page-link pagination-link" href="javascript:void(0);" data-page="${currentPage - 1}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>`;
+
+                // First page
+                paginationControls += `<li class="page-item ${(currentPage === 1) ? 'active' : ''}">
+                                    <a class="page-link pagination-link" href="javascript:void(0);" data-page="1">1</a>
+                               </li>`;
+
+                // Ellipsis after first page
+                if (currentPage > 4) {
+                    paginationControls += `<li class="page-item disabled">
+                                        <a class="page-link" href="javascript:void(0);">...</a>
+                                   </li>`;
+                }
+
+                // Page numbers around the current page
+                let startPage = Math.max(2, currentPage - 1);
+                let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationControls += `<li class="page-item ${(i === currentPage) ? 'active' : ''}">
+                                        <a class="page-link pagination-link" href="javascript:void(0);" data-page="${i}">${i}</a>
+                                   </li>`;
+                }
+
+                // Ellipsis before last page
+                if (currentPage < totalPages - 3) {
+                    paginationControls += `<li class="page-item disabled">
+                                        <a class="page-link" href="javascript:void(0);">...</a>
+                                   </li>`;
+                }
+
+                // Last page
+                paginationControls += `<li class="page-item ${(currentPage === totalPages) ? 'active' : ''}">
+                                    <a class="page-link pagination-link" href="javascript:void(0);" data-page="${totalPages}">${totalPages}</a>
+                               </li>`;
+
+                // Next button
+                paginationControls += `<li class="page-item ${(currentPage === totalPages) ? 'disabled' : ''}">
+                                    <a class="page-link pagination-link" href="javascript:void(0);" data-page="${currentPage + 1}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>`;
+            }
+
+            return paginationControls;
         }
     </script>
 @endpush

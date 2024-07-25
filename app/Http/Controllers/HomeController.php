@@ -160,7 +160,6 @@ class HomeController extends Controller
                     'meta_title' => "Resources | GBCA & Associates LLP Chartered Accountants",
                     'years' => $get_years
                 ];
-
             }
         } else {
             $category_exists = Category::where('category_slug', '=', $category)->first();
@@ -207,14 +206,38 @@ class HomeController extends Controller
                         ->whereRaw('(resource_category_id = ? OR resource_subcategory_id = ?)', [$first_category->id, $first_category->id])
                         ->whereNull('deleted_at')
                         ->orderByDesc('created_at')
-                        ->limit(4)
-                        ->get();
+                        ->get()->toArray();
+
+                    $limit = $request->filled('limit') ? (int)$request->limit : 4;
+
+                    $page = $request->filled('page') ? (int)$request->page : 1;
+
+                    if ($request->page > 1) {
+                        $start = ($request->page - 1) * $limit;
+                    } else {
+                        $start = 0;
+                    }
+
+                    $resource_count = count($get_resources);
+
+
+                    //dd($get_resources);
+
+                    $total_pages = ceil($resource_count / $limit);
+
+                    $get_resources = array_slice($get_resources, $start, $limit);
 
                     foreach ($get_resources as $key => $value) {
                         $get_resources[$key]->resource_url = route('resource', $value->resource_slug);
                     }
 
-                    $response = ['resources' => $get_resources];
+                    $response = [
+                        'resources' => $get_resources,
+                        'total' => $resource_count,
+                        'total_pages' => $total_pages,
+                        'next' => ($total_pages > $page) ? $page + 1 : 0,
+                        'prev' => $page - 1,
+                    ];
                 }
             } else {
                 $category_exists = Category::where('category_slug', '=', $request->category_slug)->first();
@@ -230,7 +253,6 @@ class HomeController extends Controller
                         ->selectRaw("DATE_FORMAT(created_at, '%b %e, %Y') AS created_date")
                         ->whereRaw("(resource_category_id = ? OR resource_subcategory_id = ?)", [$category_exists->id, $category_exists->id])
                         ->whereNull("deleted_at")
-                        ->limit(4)
                         ->orderByDesc('created_at');
 
                     if ($request->year != null && $request->year != "") {
@@ -254,6 +276,16 @@ class HomeController extends Controller
 
                     // dd($quries);
 
+                    $limit = $request->filled('limit') ? (int)$request->limit : 4;
+
+                    $page = $request->filled('page') ? (int)$request->page : 1;
+
+                    if ($request->page > 1) {
+                        $start = ($request->page - 1) * $limit;
+                    } else {
+                        $start = 0;
+                    }
+
                     if ($request->year != null && $request->year != "" && $request->month == null && $request->month == "") {
                         // Get Months
                         $get_months = DB::table('resources')
@@ -268,9 +300,17 @@ class HomeController extends Controller
                     }
 
 
+                    $resource_count = count($get_resources);
+
+
                     //dd($get_resources);
 
+                    $total_pages = ceil($resource_count / $limit);
+
+                    $get_resources = array_slice($get_resources, $start, $limit);
+
                     foreach ($get_resources as $key => $value) {
+
                         $get_resources[$key]->resource_url = route('resource', $value->resource_slug);
                         if ($value->resource_file != null && Storage::disk('public')->exists($value->resource_file)) {
                             $get_resources[$key]->resource_file = asset('storage/' . $value->resource_file);
@@ -282,7 +322,14 @@ class HomeController extends Controller
                         }
                     }
 
-                    $response = ['resources' => $get_resources, 'months' => $get_months];
+                    $response = [
+                        'resources' => $get_resources,
+                        'months' => $get_months,
+                        'total' => $resource_count,
+                        'total_pages' => $total_pages,
+                        'next' => ($total_pages > $page) ? $page + 1 : 0,
+                        'prev' => $page - 1,
+                    ];
                 }
             }
             return response()->json($response);
