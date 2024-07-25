@@ -6,7 +6,7 @@
             </a>
         </li>
         <li>
-            <a href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#profileModal">
                 <i class="fa fa-user-o white"></i>
             </a>
         </li>

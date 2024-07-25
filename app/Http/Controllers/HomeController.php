@@ -149,10 +149,10 @@ class HomeController extends Controller
 
                 // Get Years
                 $get_years = DB::table('resources')
-                    ->selectRaw("DISTINCT DATE_FORMAT(created_at, '%Y') AS resource_years")
+                    ->selectRaw("DISTINCT DATE_FORMAT(created_at, '%Y') AS resource_year")
                     ->where('resource_category_id', '=', $first_category->id)
                     ->whereNull('deleted_at')
-                    ->orderByDesc('resource_years')
+                    ->orderByDesc('resource_year')
                     ->get()->toArray();
 
                 $response = [
@@ -160,6 +160,7 @@ class HomeController extends Controller
                     'meta_title' => "Resources | GBCA & Associates LLP Chartered Accountants",
                     'years' => $get_years
                 ];
+
             }
         } else {
             $category_exists = Category::where('category_slug', '=', $category)->first();
