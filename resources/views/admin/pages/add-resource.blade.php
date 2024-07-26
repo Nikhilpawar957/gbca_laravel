@@ -33,6 +33,12 @@
                                 <span class="error small text-danger resource_title_error"></span>
                             </div>
                             <div class="mb-3">
+                                <label for="resource_flipbook_url" class="form-label">Flip Book URL</label>
+                                <input type="text" class="form-control" id="resource_flipbook_url" name="resource_flipbook_url"
+                                    placeholder="Flip Book URL">
+                                <span class="error small text-danger resource_flipbook_url_error"></span>
+                            </div>
+                            <div class="mb-3">
                                 <label for="resource_file" class="form-label">Upload PDF <small>(Max Size <= 10MB)*</small>
                                 </label>
                                 <input type="file" accept="application/pdf" id="resource_file" name="resource_file"
@@ -56,7 +62,7 @@
                                 <label for="resource_category_id" class="form-label required">Category</label>
                                 <select class="form-select" id="resource_category_id" name="resource_category_id">
                                     <option value="">Select Category</option>
-                                    @foreach (\App\Models\Category::where('parent_category', '=', 0)->get() as $category)
+                                    @foreach (\App\Models\Category::whereNull('parent_category')->get() as $category)
                                         <option value="{{ $category->id }}">{{ $category->category_name }}</option>
                                     @endforeach
                                 </select>

@@ -266,6 +266,7 @@ class AuthorController extends Controller
                 ->leftJoin('resources AS r', 'c.id', '=', 'r.resource_category_id')
                 ->whereRaw('(c.parent_category IS NULL OR c.parent_category = 0)')
                 ->whereNull('r.deleted_at')
+                ->whereNull('c.deleted_at')
                 ->groupBy('c.id')
                 ->orderBy('c.ordering')
                 ->get();
@@ -331,6 +332,7 @@ class AuthorController extends Controller
                 ->leftJoin('resources AS r', 's.id', '=', 'r.resource_subcategory_id')
                 ->whereRaw('(s.parent_category IS NOT NULL AND s.parent_category != 0)')
                 ->whereNull('r.deleted_at')
+                ->whereNull('s.deleted_at')
                 ->groupBy('s.id', 's.parent_category', 'c.category_name', 's.category_name')
                 ->orderBy('s.ordering')
                 ->get();
@@ -399,13 +401,23 @@ class AuthorController extends Controller
 
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->addColumn('resource_details',function($row){
+                    $rdetails = '<strong>Title</strong>: '.$row->resource_title.'<br><strong>Category</strong>: '.$row->category_name.'<br>';
+                    if($row->subcategory_name){
+                        $rdetails .= '<strong>Subcategory</strong>: '.$row->subcategory_name;
+                    }
+                    return $rdetails;
+                })
                 ->addColumn('action', function ($row) {
                     $encode_id = Hashids::encode($row->id);
 
                     $resourceId = ['resource_id' => $encode_id];
                     $actionBtn = '
                     <div class="btn-list flex-nowrap">
-                        <a href="' . route("author.edit-resource", $resourceId) . '" class="edit text-warning" >
+                        <a target="_blank" href="'.route('resource',[$row->resource_slug]).'" class="text-primary" title="View Resource">
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 4c4.29 0 7.863 2.429 10.665 7.154l.22 .379l.045 .1l.03 .083l.014 .055l.014 .082l.011 .1v.11l-.014 .111a.992 .992 0 0 1 -.026 .11l-.039 .108l-.036 .075l-.016 .03c-2.764 4.836 -6.3 7.38 -10.555 7.499l-.313 .004c-4.396 0 -8.037 -2.549 -10.868 -7.504a1 1 0 0 1 0 -.992c2.831 -4.955 6.472 -7.504 10.868 -7.504zm0 5a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" /></svg>
+                        </a>
+                        <a href="' . route("author.edit-resource", $resourceId) . '" class="edit text-warning" title="Edit">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="icon icon-tabler icon-tabler-edit-circle" width="24"
                                 height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -418,22 +430,30 @@ class AuthorController extends Controller
                                 <path d="M9 7.07a7 7 0 0 0 1 13.93a7 7 0 0 0 6.929 -6" />
                             </svg>
                         </a>
-                        <a href="javascript:void(0);" class="delete text-danger" onclick="return delete_resource(\'' . $encode_id . '\');">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-circle-x-filled"
-                                width="24" height="24" viewBox="0 0 24 24"
-                                stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-6.489 5.8a1 1 0 0 0 -1.218 1.567l1.292 1.293l-1.292 1.293l-.083 .094a1 1 0 0 0 1.497 1.32l1.293 -1.292l1.293 1.292l.094 .083a1 1 0 0 0 1.32 -1.497l-1.292 -1.293l1.292 -1.293l.083 -.094a1 1 0 0 0 -1.497 -1.32l-1.293 1.292l-1.293 -1.292l-.094 -.083z"
-                                    stroke-width="0" fill="currentColor" />
-                            </svg>
+                        <a href="javascript:void(0);" class="delete text-danger" onclick="return delete_resource(\'' . $encode_id . '\');" title="Delete">
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 6a1 1 0 0 1 .117 1.993l-.117 .007h-.081l-.919 11a3 3 0 0 1 -2.824 2.995l-.176 .005h-8c-1.598 0 -2.904 -1.249 -2.992 -2.75l-.005 -.167l-.923 -11.083h-.08a1 1 0 0 1 -.117 -1.993l.117 -.007h16z" /><path d="M14 2a2 2 0 0 1 2 2a1 1 0 0 1 -1.993 .117l-.007 -.117h-4l-.007 .117a1 1 0 0 1 -1.993 -.117a2 2 0 0 1 1.85 -1.995l.15 -.005h4z" /></svg>
                         </a>
                     </div>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action'])
+
+                ->addColumn('pdf_url', function ($row) {
+                    if ($row->resource_file != null && !empty($row->resource_file) && Storage::disk('public')->exists($row->resource_file)) {
+                        $pdfBtn = '<a class="text-danger" title="View PDF" target="_blank" href="' . asset('storage/' . $row->resource_file) . '"><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-file-type-pdf"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" /><path d="M5 18h1.5a1.5 1.5 0 0 0 0 -3h-1.5v6" /><path d="M17 18h2" /><path d="M20 15h-3v6" /><path d="M11 15v6h1a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2h-1z" /></svg></a>';
+                    } else {
+                        $pdfBtn = '<span>N/A</span>';
+                    }
+                    return $pdfBtn;
+                })
+                ->addColumn('flipbook', function ($row) {
+                    if ($row->resource_flipbook_url != null && !empty($row->resource_flipbook_url)) {
+                        $flipBook = '<a class="text-primary" title="View FlipBook" target="_blank" href="'.$row->resource_flipbook_url.'"><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-book"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg></a>';
+                    } else {
+                        $flipBook = '<span>N/A</span>';
+                    }
+                    return $flipBook;
+                })
+                ->rawColumns(['action', 'pdf_url','resource_details','flipbook'])
                 ->make(true);
         }
     }
@@ -751,13 +771,15 @@ class AuthorController extends Controller
 
         $subcategories = Category::where('parent_category', '=', $request->category_id)->get();
 
-        if (!empty($subcategories) && count($subcategories) > 0) {
+
+        if (!empty($subcategories) && $subcategories->count() > 0) {
 
             $totalResources = 0;
 
             foreach ($subcategories as $subcat) {
                 $totalResources += Resources::where('resource_subcategory_id', $subcat->id)->get()->count();
             }
+
 
             if ($totalResources > 0) {
                 $response = array(
@@ -771,27 +793,37 @@ class AuthorController extends Controller
                 );
             }
         } else {
-            $category = Category::where('id', '=', $request->category_id)->first();
 
-            $old_image = $category->category_image;
+            $totalResources = Resources::where('resource_category_id','=', $request->category_id)->count();
 
-            // Delete Resource Image
-            if ($old_image != null && Storage::disk('public')->exists($old_image)) {
-                Storage::disk('public')->delete($old_image);
-            }
-
-            $delete_category = $category->delete();
-
-            if ($delete_category) {
-                $response = array(
-                    'code' => 1,
-                    'msg' => 'Category Deleted',
-                );
-            } else {
+            if ($totalResources > 0) {
                 $response = array(
                     'code' => 3,
-                    'msg' => 'Something went wrong while deleting category',
+                    'msg' => 'This Category has (' . $totalResources . ') ' . Str::of('resource')->plural($totalResources) . ' related to it cannot be deleted',
                 );
+            } else {
+                $category = Category::where('id', '=', $request->category_id)->first();
+
+                $old_image = $category->category_image;
+
+                // Delete Resource Image
+                if ($old_image != null && Storage::disk('public')->exists($old_image)) {
+                    Storage::disk('public')->delete($old_image);
+                }
+
+                $delete_category = $category->delete();
+
+                if ($delete_category) {
+                    $response = array(
+                        'code' => 1,
+                        'msg' => 'Category Deleted',
+                    );
+                } else {
+                    $response = array(
+                        'code' => 3,
+                        'msg' => 'Something went wrong while deleting category',
+                    );
+                }
             }
         }
 
@@ -1249,7 +1281,7 @@ class AuthorController extends Controller
 
         $resource = Resources::find($decoded_id[0]);
 
-        if (!filter_var($resource->resource_image, FILTER_VALIDATE_URL)) {
+        if (!filter_var($resource->resource_image, FILTER_VALIDATE_URL) && $resource->resource_image != "") {
             $resource->resource_image = asset('/storage/' . $resource->resource_image);
         }
 

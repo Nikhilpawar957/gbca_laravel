@@ -35,29 +35,34 @@
                                 <img src="{{ asset('assets/img/plus-icon.svg') }}" class="menu-plus">
                             </a>
                             <ul class="sub-menu">
-                                @foreach (\App\Models\Category::whereNull('parent_category')->orderBy('ordering')->get() as $category)
+                                @php
+                                    $parent_count = \App\Models\Category::whereNull('parent_category')->count();
+                                @endphp
+                                @foreach (\App\Models\Category::whereNull('parent_category')->orderBy('ordering')->get() as $key => $category)
                                     @php
                                         $subcategories = DB::table('categories')
                                             ->where('parent_category', '=', $category->id)
                                             ->orderBy('ordering')
+                                            ->whereNull('deleted_at')
                                             ->get();
                                         if ($subcategories->isNotEmpty()) {
                                             $hasSubcat = 'has-sub news-has-menu';
                                         } else {
                                             $hasSubcat = '';
                                         }
+
+                                        $subcat_count = DB::table('categories')->where('parent_category', '=', $category->id)->whereNull('deleted_at')->count();
                                     @endphp
                                     <li class="{{ $hasSubcat }}">
-                                        <a href="{{ route('resources.resource_category', ['category' => $category->category_slug]) }}"
+                                        <a class="{{ $key == $parent_count-1 ? 'last-item' : '' }}" href="{{ route('resources.resource_category', ['category' => $category->category_slug]) }}"
                                             class="">
                                             {{ $category->category_name }}
                                         </a>
                                         @if ($subcategories->isNotEmpty())
                                             <ul class="sub-menu news-submenu">
-
-                                                @foreach ($subcategories as $key => $subcategory)
+                                                @foreach ($subcategories as $skey => $subcategory)
                                                     <li>
-                                                        <a
+                                                        <a class="{{ $skey == $subcat_count-1 ? 'last-item' : '' }}"
                                                             href="{{ route('resources.resource_category', ['category' => $subcategory->category_slug]) }}">
                                                             {{ $subcategory->category_name }}
                                                         </a>

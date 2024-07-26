@@ -314,11 +314,15 @@ class HomeController extends Controller
                         $get_resources[$key]->resource_url = route('resource', $value->resource_slug);
                         if ($value->resource_file != null && Storage::disk('public')->exists($value->resource_file)) {
                             $get_resources[$key]->resource_file = asset('storage/' . $value->resource_file);
+                        } else {
+                            $get_resources[$key]->resource_file = "";
                         }
                         if ($value->resource_image != null) {
                             if (!filter_var($value->resource_image, FILTER_VALIDATE_URL) && Storage::disk('public')->exists($value->resource_image)) {
                                 $get_resources[$key]->resource_image = asset('storage/' . $value->resource_image);
                             }
+                        } else {
+                            $get_resources[$key]->resource_image = "";
                         }
                     }
 

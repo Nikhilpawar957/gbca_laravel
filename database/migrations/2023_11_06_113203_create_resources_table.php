@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('resource_keywords')->nullable();
             $table->longText('resource_desc')->nullable();
             $table->text('resource_file')->nullable();
+            $table->text('resource_flipbook_url')->nullable();
             $table->text('resource_image')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

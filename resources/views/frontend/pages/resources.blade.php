@@ -309,7 +309,7 @@
                             element.created_date;
 
                         if (element.resource_file) {
-                            html += '&nbsp;&nbsp;<a href="' + element.resource_file +
+                            html += '&nbsp;&nbsp;<a target="_blank" href="' + element.resource_file +
                                 '"><i class="fa fa-file"></i> PDF</a>';
                         }
 

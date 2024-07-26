@@ -75,7 +75,7 @@
                                 <span class="error small text-danger resource_subcategory_id_error"></span>
                             </div>
                             <div class="mb-3">
-                                <img id="image-previewer" src="{{ $resource->resource_image }}" class="img-fluid"
+                                <img id="image-previewer" src="{{ !empty($resource->resource_image) ? $resource->resource_image : 'https://placehold.co/600x400' }}" class="img-fluid"
                                     alt="">
                             </div>
                             <div class="mb-3">

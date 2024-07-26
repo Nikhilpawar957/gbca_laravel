@@ -50,14 +50,14 @@
                                         <th style="width: 20px">
                                             No.
                                         </th>
-                                        <th>
-                                            Title
+                                        <th style="width: 500px;">
+                                            Resource
                                         </th>
-                                        <th>
-                                            Category
+                                        <th style="width: 100px">
+                                            Flip Book
                                         </th>
-                                        <th>
-                                            SubCategory
+                                        <th style="width: 100px">
+                                            PDF
                                         </th>
                                         <th style="width: 100px">
                                             Created Date
@@ -116,22 +116,22 @@
                         orderable: true,
                     },
                     {
-                        data: 'resource_title',
-                        name: 'resource_title',
+                        data: 'resource_details',
+                        name: 'resource_details',
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: 'category_name',
-                        name: 'category_name',
+                        data: 'flipbook',
+                        name: 'flipbook',
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: 'subcategory_name',
-                        name: 'subcategory_name',
-                        orderable: true,
-                        searchable: true
+                        data: 'pdf_url',
+                        name: 'pdf_url',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'date',
