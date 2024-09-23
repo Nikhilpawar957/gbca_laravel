@@ -45,7 +45,7 @@
             <div class="banner-cta-box">
                 <div class="row center-align">
                     <div class="col-lg-9 col-md-8">
-                        <h2>India Union Budget 2023</h2>
+                        <h2>India Union Budget 2024</h2>
                     </div>
                     <div class="col-lg-3 col-md-4">
                         <div class="banner-cta-btn"><a

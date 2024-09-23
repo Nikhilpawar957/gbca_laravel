@@ -27,10 +27,12 @@ class HomeController extends Controller
             'full_name' => $request->full_name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'messages' => $request->message,
+            'message' => $request->message,
         ];
 
         $save_contact_form = ContactForm::create($data);
+
+        $data['content'] = $request->message;
 
 
         // Send Email to Admin
@@ -201,7 +203,7 @@ class HomeController extends Controller
                     ]);
 
                     $get_resources = DB::table('resources')
-                        ->selectRaw("resource_title, resource_short_desc, resource_slug, resource_file, resource_image")
+                        ->selectRaw("resource_title, resource_short_desc, resource_slug, resource_file, resource_image, resource_flipbook_url")
                         ->selectRaw("DATE_FORMAT(created_at, '%b %e, %Y') AS created_date")
                         ->whereRaw('(resource_category_id = ? OR resource_subcategory_id = ?)', [$first_category->id, $first_category->id])
                         ->whereNull('deleted_at')
@@ -249,7 +251,7 @@ class HomeController extends Controller
                     DB::enableQueryLog();
 
                     $get_resources = DB::table('resources')
-                        ->selectRaw("resource_title, resource_short_desc, resource_slug, resource_file, resource_image")
+                        ->selectRaw("resource_title, resource_short_desc, resource_slug, resource_file, resource_image, resource_flipbook_url")
                         ->selectRaw("DATE_FORMAT(created_at, '%b %e, %Y') AS created_date")
                         ->whereRaw("(resource_category_id = ? OR resource_subcategory_id = ?)", [$category_exists->id, $category_exists->id])
                         ->whereNull("deleted_at")

@@ -313,6 +313,11 @@
                                 '"><i class="fa fa-file"></i> PDF</a>';
                         }
 
+                        if(element.resource_flipbook_url){
+                            html += '&nbsp;&nbsp;<a target="_blank" href="' + element.resource_flipbook_url +
+                                '">View Flipbook</a>';
+                        }
+
                         html += '</p><a href="' + element.resource_url +
                             '" target="_blank"><h4 class="resou-head">' + element
                             .resource_title + '</h4><p class="resour-para">' + element
