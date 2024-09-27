@@ -79,7 +79,7 @@
                         <li class="{{ request()->is('contact-us') ? 'active-class active' : '' }}"><a
                                 href="{{ route('contact-us') }}">Contact Us</a></li>
                         <li class="pad-diff has-sub">
-                            @if (Auth::check())
+                            @if (Auth::check() && Auth::user()->role == 2)
                                 <a href="javascript:void();" class="almn-login">{{ ucwords(auth()->user()->name) }}</a>
                                 <ul class="sub-menu alumni-menu">
                                     <li><a href="{{ route('view-profile') }}">Profile</a></li>

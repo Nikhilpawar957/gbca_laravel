@@ -246,7 +246,7 @@ class AlumniController extends Controller
     {
         $data = array();
 
-        $alumni = User::selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/',users.profile_image) ELSE profile_image END AS profile_image, CASE WHEN gender = 1 THEN 'Male' ELSE 'Female' END AS gender")->find(auth()->user()->id);
+        $alumni = User::selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/alumni/images/',users.profile_image) ELSE profile_image END AS profile_image, CASE WHEN gender = 1 THEN 'Male' ELSE 'Female' END AS gender")->find(auth()->user()->id);
 
         $data = array(
             'pageTitle' => 'View Profile',
@@ -266,7 +266,7 @@ class AlumniController extends Controller
             abort(403, 'Alumni Not Found');
         }
 
-        $alumni = User::selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/',users.profile_image) ELSE profile_image END AS profile_image, CASE WHEN gender = 1 THEN 'Male' ELSE 'Female' END AS gender")->find($decoded_id[0]);
+        $alumni = User::selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/alumni/images/',users.profile_image) ELSE profile_image END AS profile_image, CASE WHEN gender = 1 THEN 'Male' ELSE 'Female' END AS gender")->find($decoded_id[0]);
 
         $data = array(
             'pageTitle' => 'View Alumni Profile',
@@ -316,7 +316,7 @@ class AlumniController extends Controller
         $response = array();
 
         $alumnis = DB::table("users")
-            ->selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/',users.profile_image) ELSE profile_image END AS profile_image")
+            ->selectRaw("*,CASE WHEN profile_image IS NULL OR profile_image = '' THEN '" . asset('/storage/default-img.png') . "' WHEN LOCATE('http', profile_image) = 0 THEN CONCAT('" . asset('/storage') . "/alumni/images/',users.profile_image) ELSE profile_image END AS profile_image")
             ->where("role", "=", 2)
             ->where("blocked", "=", 0);
 
@@ -423,7 +423,7 @@ class AlumniController extends Controller
             }
 
             if ($image_upload) {
-                $update_data['profile_image'] = $image_path . $new_imagename;
+                $update_data['profile_image'] = $new_imagename;
             }
         }
 

@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -34,26 +35,45 @@ class HomeController extends Controller
 
         $data['content'] = $request->message;
 
+        try {
+            // Send Email to Admin
+            Mail::send('email_templates.enquiry_for_admin', $data, function ($message) use ($data) {
+                $from = "reachus@gbcaindia.com";
+                $to = "reachus@gbcaindia.com";
+                $subject = "Regarding : Enquiry from " . $data['full_name'];
 
-        // Send Email to Admin
-        Mail::send('email_templates.enquiry_for_admin', $data, function ($message) use ($data) {
-            $from = "nikhil.pawar@onerooftech.com";
-            $to = "nikhil.pawar@onerooftech.com";
-            $subject = "Regarding : Enquiry from " . $data['full_name'];
+                $message->from($from, env('APP_NAME'));
+                $message->to($to, 'GBCAIndia')->subject($subject);
+            });
 
-            $message->from($from, env('APP_NAME'));
-            $message->to($to, 'GBCAIndia')->subject($subject);
-        });
+            try {
+                // Send Email to User
+                Mail::send('email_templates.enquiry_for_user', $data, function ($message) use ($data) {
+                    $from = "reachus@gbcaindia.com";
+                    $to = $data['email'];
+                    $subject = "Thank you for your Enquiry";
 
-        // Send Email to User
-        Mail::send('email_templates.enquiry_for_user', $data, function ($message) use ($data) {
-            $from = "nikhil.pawar@onerooftech.com";
-            $to = $data['email'];
-            $subject = "Thank you for your Enquiry";
+                    $message->from($from, env('APP_NAME'));
+                    $message->to($to, $data['full_name'])->subject($subject);
+                });
+            } catch (\Exception $e) {
+                Log::error('An error occurred: ' . $e->getMessage());
+                //dd($e->getMessage());
+                return response()->json($response = array(
+                    'code' => 3,
+                    'msg' => 'Mail Not Sent, Please Try Again Later'
+                ));
+            }
 
-            $message->from($from, env('APP_NAME'));
-            $message->to($to, $data['full_name'])->subject($subject);
-        });
+        } catch (\Exception $e) {
+            // Handle other types of exceptions
+            Log::error('An error occurred: ' . $e->getMessage());
+            //dd($e->getMessage());
+            return response()->json($response = array(
+                'code' => 3,
+                'msg' => 'Mail Not Sent, Please Try Again Later'
+            ));
+        }
 
         if ($save_contact_form) {
             $response = array(
@@ -94,27 +114,47 @@ class HomeController extends Controller
             public_path('assets/docs/GBCA-Profile.pdf'),
         ];
 
-        // Send Email to Admin
-        Mail::send('email_templates.profile_enquiry_for_admin', $data, function ($message) use ($data) {
-            $from = "nikhil.pawar@onerooftech.com";
-            $to = "nikhil.pawar@onerooftech.com";
-            $subject = "GBCA-India Pvt. Ltd. Feedback Received From " . $data['full_name'];
+        try {
+            // Send Email to Admin
+            Mail::send('email_templates.profile_enquiry_for_admin', $data, function ($message) use ($data) {
+                $from = "reachus@gbcaindia.com";
+                $to = "reachus@gbcaindia.com";
+                $subject = "GBCA-India Pvt. Ltd. Feedback Received From " . $data['full_name'];
 
-            $message->from($from, env('APP_NAME'));
-            $message->to($to, 'GBCAIndia')->subject($subject);
-        });
+                $message->from($from, env('APP_NAME'));
+                $message->to($to, 'GBCAIndia')->subject($subject);
+            });
 
-        // Send Email to User
-        Mail::send('email_templates.profile_enquiry_for_user', $data, function ($message) use ($data, $files) {
-            $from = "nikhil.pawar@onerooftech.com";
-            $to = $data['email'];
-            $subject = "Thank you for your Enquiry";
-            foreach ($files as $file) {
-                $message->attach($file);
+            try {
+                // Send Email to User
+                Mail::send('email_templates.profile_enquiry_for_user', $data, function ($message) use ($data, $files) {
+                    $from = "reachus@gbcaindia.com";
+                    $to = $data['email'];
+                    $subject = "Thank you for your Enquiry";
+                    foreach ($files as $file) {
+                        $message->attach($file);
+                    }
+                    $message->from($from, env('APP_NAME'));
+                    $message->to($to, $data['full_name'])->subject($subject);
+                });
+            } catch (\Exception $e) {
+                // Handle other types of exceptions
+                Log::error('An error occurred: ' . $e->getMessage());
+                //dd($e->getMessage());
+                return response()->json($response = array(
+                    'code' => 3,
+                    'msg' => 'Mail Not Sent, Please Try Again Later'
+                ));
             }
-            $message->from($from, env('APP_NAME'));
-            $message->to($to, $data['full_name'])->subject($subject);
-        });
+        } catch (\Exception $e) {
+            // Handle other types of exceptions
+            Log::error('An error occurred: ' . $e->getMessage());
+            //dd($e->getMessage());
+            return response()->json($response = array(
+                'code' => 3,
+                'msg' => 'Mail Not Sent, Please Try Again Later'
+            ));
+        }
 
         if ($save_profile_form) {
             $response = array(
@@ -210,9 +250,9 @@ class HomeController extends Controller
                         ->orderByDesc('created_at')
                         ->get()->toArray();
 
-                    $limit = $request->filled('limit') ? (int)$request->limit : 4;
+                    $limit = $request->filled('limit') ? (int) $request->limit : 4;
 
-                    $page = $request->filled('page') ? (int)$request->page : 1;
+                    $page = $request->filled('page') ? (int) $request->page : 1;
 
                     if ($request->page > 1) {
                         $start = ($request->page - 1) * $limit;
@@ -278,9 +318,9 @@ class HomeController extends Controller
 
                     // dd($quries);
 
-                    $limit = $request->filled('limit') ? (int)$request->limit : 4;
+                    $limit = $request->filled('limit') ? (int) $request->limit : 4;
 
-                    $page = $request->filled('page') ? (int)$request->page : 1;
+                    $page = $request->filled('page') ? (int) $request->page : 1;
 
                     if ($request->page > 1) {
                         $start = ($request->page - 1) * $limit;

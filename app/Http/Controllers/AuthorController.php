@@ -18,6 +18,7 @@ use Torann\Hashids\Facade\Hashids;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Setting;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class AuthorController extends Controller
 {
@@ -120,14 +121,24 @@ class AuthorController extends Controller
                 'link' => $link,
             );
 
-            Mail::send('email_templates.reset_password_for_admin', $data, function ($message) use ($user) {
-                $from = "nikhil.pawar@onerooftech.com";
-                $to = $user->email;
-                $subject = "Reset Password";
+            try {
+                Mail::send('email_templates.reset_password_for_admin', $data, function ($message) use ($user) {
+                    $from = "reachus@gbcaindia.com";
+                    $to = $user->email;
+                    $subject = "Reset Password";
 
-                $message->from($from, env('APP_NAME'));
-                $message->to($to, 'GBCAUAE')->subject($subject);
-            });
+                    $message->from($from, env('APP_NAME'));
+                    $message->to($to, 'GBCAIndia')->subject($subject);
+                });
+            } catch (\Exception $e) {
+                // Handle other types of exceptions
+                Log::error('An error occurred: ' . $e->getMessage());
+                //dd($e->getMessage());
+                return response()->json($response = array(
+                    'code' => 3,
+                    'msg' => 'Mail Not Sent, Please Try Again Later'
+                ));
+            }
 
             $response = [
                 'code' => 1,
@@ -183,7 +194,7 @@ class AuthorController extends Controller
             ];
         } else {
             User::where('email', $request->email)->update([
-                'password' => Hash::make($request->new_password,)
+                'password' => Hash::make($request->new_password)
             ]);
 
             DB::table('password_resets')->where([
@@ -392,7 +403,7 @@ class AuthorController extends Controller
         if ($request->ajax()) {
             $data = DB::table('resources AS r')
                 ->selectRaw("r.*,c.category_name AS 'category_name',s.category_name AS 'subcategory_name'")
-                ->selectRaw("date_format(r.created_at, '%b %d,%Y') as date")
+                ->selectRaw("date_format(r.created_at, '%b %d, %Y') as date")
                 ->leftJoin('categories AS c', 'r.resource_category_id', '=', 'c.id')
                 ->leftJoin('categories AS s', 'r.resource_subcategory_id', '=', 's.id')
                 ->whereNull('r.deleted_at')
@@ -401,10 +412,10 @@ class AuthorController extends Controller
 
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('resource_details',function($row){
-                    $rdetails = '<strong>Title</strong>: '.$row->resource_title.'<br><strong>Category</strong>: '.$row->category_name.'<br>';
-                    if($row->subcategory_name){
-                        $rdetails .= '<strong>Subcategory</strong>: '.$row->subcategory_name;
+                ->addColumn('resource_details', function ($row) {
+                    $rdetails = '<strong>Title</strong>: ' . $row->resource_title . '<br><strong>Category</strong>: ' . $row->category_name . '<br>';
+                    if ($row->subcategory_name) {
+                        $rdetails .= '<strong>Subcategory</strong>: ' . $row->subcategory_name;
                     }
                     return $rdetails;
                 })
@@ -414,7 +425,7 @@ class AuthorController extends Controller
                     $resourceId = ['resource_id' => $encode_id];
                     $actionBtn = '
                     <div class="btn-list flex-nowrap">
-                        <a target="_blank" href="'.route('resource',[$row->resource_slug]).'" class="text-primary" title="View Resource">
+                        <a target="_blank" href="' . route('resource', [$row->resource_slug]) . '" class="text-primary" title="View Resource">
                             <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 4c4.29 0 7.863 2.429 10.665 7.154l.22 .379l.045 .1l.03 .083l.014 .055l.014 .082l.011 .1v.11l-.014 .111a.992 .992 0 0 1 -.026 .11l-.039 .108l-.036 .075l-.016 .03c-2.764 4.836 -6.3 7.38 -10.555 7.499l-.313 .004c-4.396 0 -8.037 -2.549 -10.868 -7.504a1 1 0 0 1 0 -.992c2.831 -4.955 6.472 -7.504 10.868 -7.504zm0 5a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" /></svg>
                         </a>
                         <a href="' . route("author.edit-resource", $resourceId) . '" class="edit text-warning" title="Edit">
@@ -447,13 +458,13 @@ class AuthorController extends Controller
                 })
                 ->addColumn('flipbook', function ($row) {
                     if ($row->resource_flipbook_url != null && !empty($row->resource_flipbook_url)) {
-                        $flipBook = '<a class="text-primary" title="View FlipBook" target="_blank" href="'.$row->resource_flipbook_url.'"><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-book"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg></a>';
+                        $flipBook = '<a class="text-primary" title="View FlipBook" target="_blank" href="' . $row->resource_flipbook_url . '"><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-book"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg></a>';
                     } else {
                         $flipBook = '<span>N/A</span>';
                     }
                     return $flipBook;
                 })
-                ->rawColumns(['action', 'pdf_url','resource_details','flipbook'])
+                ->rawColumns(['action', 'pdf_url', 'resource_details', 'flipbook'])
                 ->make(true);
         }
     }
@@ -463,7 +474,7 @@ class AuthorController extends Controller
     {
         if ($request->ajax()) {
             $data = DB::table('contact_forms AS c')
-                ->selectRaw("*,date_format(c.created_at, '%b %d,%Y') as date")
+                ->selectRaw("*,date_format(c.created_at, '%b %d, %Y') as date")
                 ->orderByDesc('id');
 
             if ($request->filled('date_range')) {
@@ -491,7 +502,7 @@ class AuthorController extends Controller
     {
         if ($request->ajax()) {
             $data = DB::table('profile_form AS p')
-                ->selectRaw("*,date_format(p.created_at, '%b %d,%Y') as date")
+                ->selectRaw("*,date_format(p.created_at, '%b %d, %Y') as date")
                 ->orderByDesc('id');
 
             if ($request->filled('date_range')) {
@@ -519,7 +530,7 @@ class AuthorController extends Controller
     {
         if ($request->ajax()) {
             $data = DB::table('users AS u')
-                ->selectRaw("*,date_format(u.created_at, '%b %d,%Y') as date")
+                ->selectRaw("*,date_format(u.created_at, '%b %d, %Y') as date")
                 ->where('role', '!=', 1)
                 ->orderByDesc('id');
 
@@ -595,16 +606,7 @@ class AuthorController extends Controller
 
                     // Edit & Delete button
                     $actionBtn .= '<a href="javascript:void(0);" class="delete text-danger" data-bs-toggle="tooltip" data-bs-placement="left" title="Delete" onclick="return delete_user(\'' . $encode_id . '\');">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-circle-x-filled"
-                                width="24" height="24" viewBox="0 0 24 24"
-                                stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-6.489 5.8a1 1 0 0 0 -1.218 1.567l1.292 1.293l-1.292 1.293l-.083 .094a1 1 0 0 0 1.497 1.32l1.293 -1.292l1.293 1.292l.094 .083a1 1 0 0 0 1.32 -1.497l-1.292 -1.293l1.292 -1.293l.083 -.094a1 1 0 0 0 -1.497 -1.32l-1.293 1.292l-1.293 -1.292l-.094 -.083z"
-                                    stroke-width="0" fill="currentColor" />
-                            </svg>
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 6a1 1 0 0 1 .117 1.993l-.117 .007h-.081l-.919 11a3 3 0 0 1 -2.824 2.995l-.176 .005h-8c-1.598 0 -2.904 -1.249 -2.992 -2.75l-.005 -.167l-.923 -11.083h-.08a1 1 0 0 1 -.117 -1.993l.117 -.007h16z" /><path d="M14 2a2 2 0 0 1 2 2a1 1 0 0 1 -1.993 .117l-.007 -.117h-4l-.007 .117a1 1 0 0 1 -1.993 -.117a2 2 0 0 1 1.85 -1.995l.15 -.005h4z" /></svg>
                         </a>
                     </div>';
                     return $actionBtn;
@@ -633,7 +635,9 @@ class AuthorController extends Controller
                 ]);
             } else {
                 $request->validate([
-                    'category_id' => 'required', 'integer', 'exists:categories,id',
+                    'category_id' => 'required',
+                    'integer',
+                    'exists:categories,id',
                     'category_name' => ['required', 'min:3', 'unique:categories,category_name,' . $request->category_id],
                 ]);
             }
@@ -794,7 +798,7 @@ class AuthorController extends Controller
             }
         } else {
 
-            $totalResources = Resources::where('resource_category_id','=', $request->category_id)->count();
+            $totalResources = Resources::where('resource_category_id', '=', $request->category_id)->count();
 
             if ($totalResources > 0) {
                 $response = array(
@@ -1065,44 +1069,64 @@ class AuthorController extends Controller
                 $request->validate([
                     'resource_id' => 'required|integer|exists:resources,id',
                     'resource_category_id' => 'required|integer',
-                    'resource_title' => ['required', 'min:3', 'max:255', Rule::unique('resources')->ignore($request->resource_id)->where(function ($query) {
-                        return $query->whereNull('deleted_at');
-                    })],
+                    'resource_title' => [
+                        'required',
+                        'min:3',
+                        'max:255',
+                        Rule::unique('resources')->ignore($request->resource_id)->where(function ($query) {
+                            return $query->whereNull('deleted_at');
+                        })
+                    ],
                     'resource_file' => 'file|max:10600',
                     'resource_image' => 'file|max:2048',
-                    'resource_short_desc' => 'required|min:3|max:255',
+                    'resource_short_desc' => 'required|min:3',
                     'resource_desc' => 'required|min:3',
                 ]);
             } else if ($request->hasFile('resource_file')) {
                 $request->validate([
                     'resource_id' => 'required|exists:resources,id',
                     'resource_category_id' => 'required|integer',
-                    'resource_title' => ['required', 'min:3', 'max:255', Rule::unique('resources')->ignore($request->resource_id)->where(function ($query) {
-                        return $query->whereNull('deleted_at');
-                    })],
+                    'resource_title' => [
+                        'required',
+                        'min:3',
+                        'max:255',
+                        Rule::unique('resources')->ignore($request->resource_id)->where(function ($query) {
+                            return $query->whereNull('deleted_at');
+                        })
+                    ],
                     'resource_file' => 'file|max:10600',
-                    'resource_short_desc' => 'required|min:3|max:255',
+                    'resource_short_desc' => 'required|min:3',
                     'resource_desc' => 'required|min:3',
                 ]);
             } else if ($request->hasFile('resource_image')) {
                 $request->validate([
                     'resource_id' => 'required|exists:resources,id',
                     'resource_category_id' => 'required|integer',
-                    'resource_title' => ['required', 'min:3', 'max:255', Rule::unique('resources')->ignore($request->resource_id)->where(function ($query) {
-                        return $query->whereNull('deleted_at');
-                    })],
+                    'resource_title' => [
+                        'required',
+                        'min:3',
+                        'max:255',
+                        Rule::unique('resources')->ignore($request->resource_id)->where(function ($query) {
+                            return $query->whereNull('deleted_at');
+                        })
+                    ],
                     'resource_image' => 'file|max:2048',
-                    'resource_short_desc' => 'required|min:3|max:255',
+                    'resource_short_desc' => 'required|min:3',
                     'resource_desc' => 'required|min:3',
                 ]);
             } else {
                 $request->validate([
                     'resource_id' => 'required|exists:resources,id',
                     'resource_category_id' => 'required|integer',
-                    'resource_title' => ['required', 'min:3', 'max:255', Rule::unique('resources')->ignore($request->resource_id)->where(function ($query) {
-                        return $query->whereNull('deleted_at');
-                    })],
-                    'resource_short_desc' => 'required|min:3|max:255',
+                    'resource_title' => [
+                        'required',
+                        'min:3',
+                        'max:255',
+                        Rule::unique('resources')->ignore($request->resource_id)->where(function ($query) {
+                            return $query->whereNull('deleted_at');
+                        })
+                    ],
+                    'resource_short_desc' => 'required|min:3',
                     'resource_desc' => 'required|min:3',
                 ]);
             }
@@ -1179,41 +1203,61 @@ class AuthorController extends Controller
             if ($request->hasFile('resource_file') && $request->hasFile('resource_image')) {
                 $request->validate([
                     'resource_category_id' => 'required|integer',
-                    'resource_title' => ['required', 'min:3', 'max:255', Rule::unique('resources')->where(function ($query) {
-                        return $query->whereNull('deleted_at');
-                    })],
+                    'resource_title' => [
+                        'required',
+                        'min:3',
+                        'max:255',
+                        Rule::unique('resources')->where(function ($query) {
+                            return $query->whereNull('deleted_at');
+                        })
+                    ],
                     'resource_file' => 'file|max:10600',
                     'resource_image' => 'file|max:2048',
-                    'resource_short_desc' => 'required|min:3|max:255',
+                    'resource_short_desc' => 'required|min:3',
                     'resource_desc' => 'required|min:3',
                 ]);
             } else if ($request->hasFile('resource_file')) {
                 $request->validate([
                     'resource_category_id' => 'required|integer',
-                    'resource_title' => ['required', 'min:3', 'max:255', Rule::unique('resources')->where(function ($query) {
-                        return $query->whereNull('deleted_at');
-                    })],
+                    'resource_title' => [
+                        'required',
+                        'min:3',
+                        'max:255',
+                        Rule::unique('resources')->where(function ($query) {
+                            return $query->whereNull('deleted_at');
+                        })
+                    ],
                     'resource_file' => 'file|max:10600',
-                    'resource_short_desc' => 'required|min:3|max:255',
+                    'resource_short_desc' => 'required|min:3',
                     'resource_desc' => 'required|min:3',
                 ]);
             } else if ($request->hasFile('resource_image')) {
                 $request->validate([
                     'resource_category_id' => 'required|integer',
-                    'resource_title' => ['required', 'min:3', 'max:255', Rule::unique('resources')->where(function ($query) {
-                        return $query->whereNull('deleted_at');
-                    })],
+                    'resource_title' => [
+                        'required',
+                        'min:3',
+                        'max:255',
+                        Rule::unique('resources')->where(function ($query) {
+                            return $query->whereNull('deleted_at');
+                        })
+                    ],
                     'resource_image' => 'file|max:2048',
-                    'resource_short_desc' => 'required|min:3|max:255',
+                    'resource_short_desc' => 'required|min:3',
                     'resource_desc' => 'required|min:3',
                 ]);
             } else {
                 $request->validate([
                     'resource_category_id' => 'required|integer',
-                    'resource_title' => ['required', 'min:3', 'max:255', Rule::unique('resources')->where(function ($query) {
-                        return $query->whereNull('deleted_at');
-                    })],
-                    'resource_short_desc' => 'required|min:3|max:255',
+                    'resource_title' => [
+                        'required',
+                        'min:3',
+                        'max:255',
+                        Rule::unique('resources')->where(function ($query) {
+                            return $query->whereNull('deleted_at');
+                        })
+                    ],
+                    'resource_short_desc' => 'required|min:3',
                     'resource_desc' => 'required|min:3',
                 ]);
             }
@@ -1403,6 +1447,12 @@ class AuthorController extends Controller
 
         if (!$user) {
             return response()->json(['code' => '3', 'message' => 'Invalid User']);
+        }
+
+        $image_path = 'alumni/images/';
+
+        if ($user->profile_image != null && Storage::disk('public')->exists($image_path . $user->profile_image)) {
+            Storage::disk('public')->delete($image_path . $user->profile_image);
         }
 
         $delete_user = $user->delete();

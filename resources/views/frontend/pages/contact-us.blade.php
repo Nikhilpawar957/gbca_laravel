@@ -44,26 +44,26 @@
                                     <div class="field contact-inner text-left col-lg-12">
                                         <span class="text-danger error-text full_name_error"></span>
                                         <input type="text" name="full_name" id="full_name"
-                                            placeholder="Enter Full Name eg: John Smith" maxlength="150">
-                                        <label for="fullname">Full Name <span class="text-danger">*</span></label>
+                                            placeholder="Enter Full Name eg: John Smith" maxlength="150" autocomplete="off">
+                                        <label for="full_name">Full Name <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
                                         <span class="text-danger error-text email_error"></span>
                                         <input type="text" name="email" id="email"
-                                            placeholder="Enter Email Address eg: john@example.com" maxlength="150">
+                                            placeholder="Enter Email Address eg: john@example.com" maxlength="150" autocomplete="off">
                                         <label for="email">E-mail <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner text-left col-lg-12 mb-0">
                                         <span class="text-danger error-text phone_error"></span>
                                         <input type="tel" name="phone" id="phone"
                                             placeholder="Enter Phone Number eg: 9999933339" maxlength="10"
-                                            onkeypress="return phone_validate(event)">
+                                            onkeypress="return phone_validate(event)" autocomplete="off">
                                         <label for="phone">Phone Number <span class="text-danger">*</span></label>
                                     </div>
                                     <div class="field contact-inner col-lg-12 text-left">
                                         <span class="text-danger error-text message_error"></span>
-                                        <textarea name="message" id="message" placeholder="Enter message here"></textarea>
-                                        <label for="massage">Write a Message</label>
+                                        <textarea name="message" id="message" placeholder="Enter message here"  autocomplete="off"></textarea>
+                                        <label for="message">Write a Message</label>
                                     </div>
                                 </div>
                                 <div class="comment-submit-btn">
@@ -210,9 +210,12 @@
                         $(form).find('button[type="submit"]').prop('disabled', false);
                     },
                     error: function(response) {
-                        $.each(response.responseJSON.errors, function(prefix, val) {
-                            $(form).find('span.' + prefix + '_error').text(val[0]);
-                        });
+                        if (response.status === 422) {
+                            $.each(response.responseJSON.errors, function(prefix, val) {
+                                $(form).find('span.' + prefix + '_error').text(val[0]);
+                            });
+                        }
+
                         $(form).find(".alert-info").text('').slideUp();
                         $(form).find('button[type="submit"]').prop('disabled', false);
                     }

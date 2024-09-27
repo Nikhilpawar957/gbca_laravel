@@ -139,14 +139,14 @@
                                             <div class="field contact-inner text-left col-lg-12">
                                                 <span class="text-danger error-text full_name_error"></span>
                                                 <input type="text" name="full_name" id="full_name"
-                                                    placeholder="Enter Full Name" maxlength="150">
+                                                    placeholder="Enter Full Name" maxlength="150"  autocomplete="off">
                                                 <label for="full_name">Full Name <span
                                                         class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner text-left col-lg-12 mb-0">
                                                 <span class="text-danger error-text email_error"></span>
                                                 <input type="text" name="email" id="email"
-                                                    placeholder="Enter E-mail" maxlength="150">
+                                                    placeholder="Enter E-mail" maxlength="150" autocomplete="off">
                                                 <label for="email">E-mail <span
                                                         class="text-danger">*</span></label>
                                             </div>
@@ -154,7 +154,7 @@
                                                 <span class="text-danger error-text phone_error"></span>
                                                 <input type="tel" name="phone" id="phone"
                                                     placeholder="Enter Phone Number" maxlength="10"
-                                                    onkeypress="return phone_validate(event)">
+                                                    onkeypress="return phone_validate(event)" autocomplete="off">
                                                 <label for="phone">Phone Number <span
                                                         class="text-danger">*</span></label>
                                             </div>

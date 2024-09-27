@@ -38,7 +38,7 @@
                     </div>
                     <div class="static-profile-details">
                         <h4 class="name"><i class="fa fa-user" aria-hidden="true"></i> {{ $alumni->name }}</h4>
-                        <h4><i class="fa fa-phone" aria-hidden="true"></i> Concat: {{ $alumni->phone }}</h4>
+                        <h4><i class="fa fa-phone" aria-hidden="true"></i> Contact: {{ $alumni->phone }}</h4>
                         <h4><i class="fa fa-envelope" aria-hidden="true"></i> Email: {{ $alumni->email }}</h4>
                         <h4 class="last-info"><i class="fa fa-tint" aria-hidden="true"></i> Blood Group: {{ $alumni->blood_group }}</h4>
                         <a href="{{ route('edit-profile') }}" class="orange-btn">Edit Profile <img

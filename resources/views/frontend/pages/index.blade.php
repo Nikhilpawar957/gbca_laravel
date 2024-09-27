@@ -372,6 +372,42 @@
                     </div>
                 </div>
             </div>
+            <div class="pr-0 slider-margin">
+                <div class="owl-courses-item owl-carousel resources-carousel">
+                    @php
+                        $resources_on_display = \App\Models\Resources::orderByDesc('id')->limit(10)->get();
+                    @endphp
+                    @foreach ($resources_on_display as $item)
+                        @php
+                            if (
+                                $item->resource_image != null
+                            ) {
+                                $image = asset('storage/resource/images/' . $item->resource_image);
+                            } else {
+                                $image = 'https://placehold.co/392x256/254796/white?text=GBCA';
+                            }
+                        @endphp
+                        <div class="item">
+                            <a href="{{ route('resource', [$item->resource_slug]) }}" target="_blank"><img
+                                    width="392" height="256" src="{{ $image }}" alt="Course One"></a>
+                            <div class="down-content">
+                                <div class="info">
+                                    <p class="r-date">{{ date('d M, Y', strtotime($item->created_at)) }}</p>
+                                    <p class="r-pdf"></p>
+                                </div>
+                                <a href="{{ route('resource', [$item->resource_slug]) }}" target="_blank">
+                                    <h4>{{ $item->resource_title }}</h4>
+                                </a>
+                            </div>
+                            <div class="resur-down-btn first">
+                                <a href="{{ route('resource', [$item->resource_slug]) }}" class="icon-read-more"
+                                    target="_blank">Read More <img src="assets/img/arrow-right.svg"
+                                        class="img-fluid btn-arrow"></a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
             <div class="col-lg-12">
                 <div class="head-btn d-block d-lg-none d-md-none">
                     <a href="{{ route('resources.all') }}">View all <img
@@ -417,7 +453,8 @@
                                                 <span class="text-danger error-text full_name_error"></span>
                                                 <input type="text" name="full_name" id="full_name"
                                                     placeholder="Enter Full Name" maxlength="150">
-                                                <label for="full_name">Full Name <span class="text-danger">*</span></label>
+                                                <label for="full_name">Full Name <span
+                                                        class="text-danger">*</span></label>
                                             </div>
                                             <div class="field contact-inner text-left col-lg-12 mb-0">
                                                 <span class="text-danger error-text email_error"></span>
@@ -450,8 +487,8 @@
                                 </form>
                             </div>
                             <div class="cta-btn d-block d-lg-none d-md-none">
-                                <a href="#" class="trasf-btn">Contact Us <img src="assets/img/blue-arrow.png"
-                                        class="img-fluid btn-arrow"></a>
+                                <a href="{{ route('contact-us') }}" class="trasf-btn">Contact Us <img
+                                        src="assets/img/blue-arrow.png" class="img-fluid btn-arrow"></a>
                             </div>
                         </div>
                     </div>
@@ -639,9 +676,11 @@
                         $(form).find('button[type="submit"]').prop('disabled', false);
                     },
                     error: function(response) {
-                        $.each(response.responseJSON.errors, function(prefix, val) {
-                            $(form).find('span.' + prefix + '_error').text(val[0]);
-                        });
+                        if (response.status === 422) {
+                            $.each(response.responseJSON.errors, function(prefix, val) {
+                                $(form).find('span.' + prefix + '_error').text(val[0]);
+                            });
+                        }
                         $(form).find(".alert-info").text('').slideUp();
                         $(form).find('button[type="submit"]').prop('disabled', false);
                     }

@@ -151,9 +151,11 @@
                         $(form).find('button[type="submit"]').prop('disabled', false);
                     },
                     error: function(response) {
-                        $.each(response.responseJSON.errors, function(prefix, val) {
-                            $(form).find('span.' + prefix + '_error').text(val[0]);
-                        });
+                        if (response.status === 422) {
+                            $.each(response.responseJSON.errors, function(prefix, val) {
+                                $(form).find('span.' + prefix + '_error').text(val[0]);
+                            });
+                        }
                         $(form).find(".alert-info").text('').slideUp();
                         $(form).find('button[type="submit"]').prop('disabled', false);
                     }
