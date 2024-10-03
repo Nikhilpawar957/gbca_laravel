@@ -34,9 +34,10 @@ Route::prefix('services')->name('services.')->group(function () {
     Route::view('/safe', 'frontend.pages.safe')->name('safe');
     Route::view('/doing-business-in-india', 'frontend.pages.doing-business-in-india')->name('doing-business-in-india');
 });
+Route::get('/resources/all',  [HomeController::class, 'resource_category'])->name('resources.all');
 
 Route::prefix('resources')->name('resources.')->group(function () {
-    Route::get('/',  [HomeController::class, 'resource_category'])->name('all');
+    //Route::get('/',  [HomeController::class, 'resource_category'])->name('all');
     Route::get('/{category}', [HomeController::class, 'resource_category'])->name('resource_category');
     Route::post('/get_resources', [HomeController::class, 'get_resources'])->name('get_resources');
 });
